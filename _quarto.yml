@@ -6,3 +6,6 @@ format:
   html:
     toc: true
     number-sections: true
+
+execute:
+  enabled: false
