@@ -1,0 +1,159 @@
+---
+title: "Master - Detail Report"
+format:
+  typst:
+    margin:
+      x: 0.8cm
+      y: 0.8cm
+    mainfont: "Helvetica"
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{=typst}
+#set text(  font: "Helvetica",  size: 9pt)
+```
+
+```{r}
+#| label: load-packages
+#| echo: true
+#| error: true
+pacman::p_load(tidyverse, knitr, kableExtra, gt, tinytable, pander)
+
+mtcars %>% head() %>% glimpse()
+
+mtcars %>% head()
+
+cat("## GT Table\n")
+
+mtcars %>% head(30) %>% gt() %>%   opt_table_font(   font = "Helvetica",   add = FALSE  )
+
+cat("## Kable Table\n")
+mtcars %>% head(30) %>% kable()
+
+cat("## Tinytable\n")
+mtcars %>% head(30) %>% tinytable::tt(theme="grid", fontsize = 0.8)
+#https://rapporter.github.io/pander/
+cat("## Pander\n")
+mtcars %>% head(30) %>% pander::pandoc.table(style='simple', split.tables = Inf, justify = "center", caption = "Pander Table")
+
+cat("```{=typst}\n")
+cat("== Tinytable Output\n")
+cat("This will not work in Typst, but it works in R Markdown, it needs results asis.\n")
+cat("```\n")
+
+master_detail <- mtcars %>% rownames_to_column("car") %>% select(car, mpg, cyl, disp, hp, drat, wt, qsec, vs, am, gear, carb) %>% mutate(ser= row_number(), .by=gear) %>% group_by(gear) %>% summarise(n=n(), avgMPG = mean(mpg, na.rm=T), details = list(cur_data_all()), .groups = "drop") %>% select(gear, n, avgMPG, details)
+#master_detail %>% tt()
+typst_escape <- function(x) {
+  x <- as.character(x)
+  x[is.na(x)] <- ""
+  x <- gsub("\\\\", "\\\\\\\\", x)
+  x <- gsub("\\[", "\\\\[", x)
+  x <- gsub("\\]", "\\\\]", x)
+  x
+}
+
+```
+
+```{r}
+#| results: asis
+#| echo: true
+#| label: report-master-detail
+for (i in seq_len(nrow(master_detail))) {
+  gear_val <- master_detail$gear[i]
+  n_val <- master_detail$n[i]
+  avgMPG_val <- round(master_detail$avgMPG[i], 2)
+  detail_tbl <- master_detail$details[[i]]
+
+  cat("```{=typst}\n")
+  cat("= Master Section\n")
+  cat("#v(6pt)\n")
+  cat("#text(weight: \"bold\")[Gear: ", gear_val, " | Count: ", n_val, " | Avg MPG: ", avgMPG_val, "]\n", sep = "")
+  cat("== Detail Section\n")
+  cat("#v(3pt)\n")
+  cat("#table(\n")
+  cat(" columns: (1fr, 1fr, 1fr, 1fr, 1fr), stroke: 0.4pt + black, inset: 2pt, align: center + horizon,\n")
+
+  headers <- c('carname', 'mpg','cyl', 'hp', 'wt')
+
+  for (h in headers) {
+    cat("  [#text(weight: \"bold\")[", h, "]],\n", sep = "")
+  }
+
+    for (j in seq_len(nrow(detail_tbl))) {
+    cat("  [", typst_escape(detail_tbl$car[j]), "],\n", sep = "")
+    cat("  [", typst_escape(detail_tbl$mpg[j]), "],\n", sep = "")
+    cat("  [", typst_escape(detail_tbl$cyl[j]), "],\n", sep = "")
+    cat("  [", typst_escape(detail_tbl$hp[j]), "],\n", sep = "")
+    cat("  [", typst_escape(detail_tbl$wt[j]), "],\n", sep = "")
+    }
+    cat(")\n")
+ 
+    cat("```\n")
+}
+```
+
+
+### Long Report - 1
+```{r}
+#| results: asis
+#| echo: true
+library(tinytable)
+iris %>% head(60) %>% mutate(ser= row_number()) %>% select(ser, everything()) %>% tinytable::tt() |>  tinytable::style_tt(fontsize = .8) |>  tinytable::theme_typst(figure = FALSE, multipage=TRUE)
+```
+
+### Long Report - 2
+```{r, results='asis'}
+#| echo: true
+library(gt)
+iris %>% head(60) %>% gt() %>% opt_table_font(font = "Helvetica", size = px(12) )
+```
+
+### Long Report in 1 Page (IRIS)
+```{=typst}
+//#set page(  width: 29.7cm,  height: 21cm,  margin: 0.5cm)
+#set text(size: 8pt)
+#set par(leading: 0.75em)
+#set text( font: "Arial",  size: 9pt)
+```
+```{r}
+#| label: tbl-iris
+#| output: asis
+#| echo: true
+
+library(tinytable)
+
+iris %>%  head(50) %>%  tinytable::tt(width = 0.95) %>%  style_tt(fontsize = .7) %>%  theme_typst( figure = FALSE,    multipage = FALSE  )
+
+```
+
+
+### Tiny Table as Image
+```{r}
+#| label: tbl-compact-image
+#| fig-width: 7
+#| fig-height: 11
+#| out-width: "100%"
+#| out-height: "100%"
+#| echo: true
+
+library(knitr)
+library(tinytable)
+
+dir.create("assets", showWarnings = FALSE)
+png_path <- file.path("assets", "iris.png")
+
+tab <- mtcars %>% head(30) %>% tinytable::tt() |>  tinytable::theme_grid() |>  tinytable::style_tt(line="lrtb", line_color='black', line_width=.1, fontsize = .7)
+tinytable::save_tt(  tab,  output = png_path,  overwrite = TRUE)
+#knitr::include_graphics(png_path)
+```
+
+### This is image of TT Table
+```{=typst}
+#align(center)[  #image( "assets/iris.png", width: 70%, height: 60%,  fit: "contain" )]
+```
+::: {.callout-note}
+This is demo report
+:::

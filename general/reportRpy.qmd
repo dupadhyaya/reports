@@ -1,0 +1,75 @@
+---
+title: "Using mtcars in R and Python"
+format:
+  typst:
+    margin:
+      x: 0.8cm
+      y: 0.8cm
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+
+# Python Environment
+```{r}
+#| label: setup-python
+library(reticulate)
+use_python(  "/Users/du/anaconda3/bin/python",  required = TRUE)
+py_config()
+```
+
+
+# R creates mtcars data
+
+
+
+```{python}
+import sys
+print(sys.executable)
+```
+
+```{r}
+#| label: chunk-r1
+pacman::p_load(tidyverse, tinytable)
+cat("## Tinytable\n")
+mtcars %>% head() %>% tt()
+
+```
+
+
+# Python uses mtcars
+
+```{python}
+#| label: chunk-py1
+import pandas as pd
+from pydataset import data
+mtcars = data('mtcars')
+
+mtcars.head()
+```
+
+```{python}
+#| echo: false
+#| results: asis
+#| label: chunk-py2
+from IPython.display import Markdown, display
+total = 124
+fees = 38
+pct = round(fees / total * 100, 1)
+
+print(f""" ## Admission Summary : Total forms: **{total}**  , Fees received: **{fees}**  , Conversion: **{pct}%** """)
+
+```
+
+# Typst text
+
+```{=typst}
+#block(width: 100%, inset: 6pt, stroke: 0.5pt + black)[
+  This report used R to load mtcars and Python to summarize it.
+]
+```
+
+
+

@@ -1,0 +1,77 @@
+
+
+R chunks -> generate graphs
+Quarto -> document/report structure
+Typst -> PDF layout/rendering
+
+---
+title: "LMS Report AY2026 - ODD"
+subtitle: "Analysis of LMS Portal Data"
+author: "EDA"
+date: today
+format:
+  typst:
+    toc: true
+    number-sections: true
+    papersize: a4
+    margin:
+      x: 1cm
+      y: 1cm
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: lms-setup
+#| fig-width: 14
+#| fig-height: 7
+#| fig-cap: "Course & LMS Setup"
+
+plot(lmsObjects$gLMS_M01)
+```
+
+#TYPST------
+
+\clearpage
+\newpage
+\usepackage{...}
+\begin{figure}
+\end{figure}
+
+
+Quarto document
+└── Typst controls PDF layout
+    └── R chunks generate graphs/tables
+    
+Typst - R
+
+---
+title: "Typst from R"
+format:
+  typst:
+execute:
+  echo: false
+---
+
+```{r}
+#| results: asis
+
+campus <- "Mumbai"
+courses <- 3102
+
+cat(sprintf('#box[  #text(size: 16pt, weight: "bold")[%s]  has #strong[%s] LMS courses.]',campus, courses))
+```
+
+
+
+#-YAML----------
+# to save output to defined dir
+roject:
+  output-dir: output
+  output-dir: /Users/du/Desktop/quarto-output
+
+format:
+  typst:
+    keep-typ: true
