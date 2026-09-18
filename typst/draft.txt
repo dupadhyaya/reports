@@ -1,0 +1,63 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+#table(
+  columns: (
+    0.7cm,  // id
+    2.3cm,  // Sepal.Length
+    2.3cm,  // Sepal.Width
+    2.3cm,  // Petal.Length
+    2.3cm,  // Petal.Width
+    2.5cm,  // Species
+  ),
+
+  align: (x, _) => {
+    if x == 5 {
+      left
+    } else {
+      center
+    }
+  },
+
+  inset: (
+    x: 5pt,
+    y: 4pt,
+  ),
+
+  stroke: 0.35pt + luma(170),
+
+  fill: (_, y) => {
+    if y == 0 {
+      rgb("#315f72")
+    } else if calc.even(y) {
+      rgb("#edf5f7")
+    } else {
+      white
+    }
+  },
+
+  // Repeated on every page.
+  table.header(
+    repeat: true,
+    ..column-names.map(
+      heading => text(
+        fill: white,
+        weight: "bold",
+        size: 8pt,
+      )[#heading]
+    ),
+  ),
+
+  // Insert every row and column.
+  ..data-rows.flatten(),
+)
