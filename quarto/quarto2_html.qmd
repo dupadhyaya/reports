@@ -1,0 +1,148 @@
+---
+title: "Quarto Fenced Div & Callouts"
+format: html
+---
+
+# Fenced 
+::: {#id .class1 key=value}
+This is a fenced div with an id, class, and key-value pair. You can use this to create custom containers in your Quarto documents.
+:::
+
+## 1. Applying Custom Backgrounds and Borders
+You can combine standard CSS classes or your own styles.css properties. Here, we create a custom alert box:
+
+::: {.bg-light .border .rounded .p-3}
+### 💡 Quick Notice
+This box has a light grey background, rounded corners, and padding. You can use standard Bootstrap utility classes directly inside Quarto!
+:::
+
+## 2. Creating Layout Columns (Side-by-Side Content)
+Quarto recognizes the .columns and .column classes out of the box. This lets you put text, lists, or media next to each other easily:
+
+::: {.columns}
+::: {.column width="30%"}
+### Left Column 30%
+- **Item A:** A detailed point on the left side.
+- **Item B:** Another piece of data.
+:::
+
+::: {.column width="50%"}
+### Right Column 50%
+Here is a paragraph explaining the context of the list on the left, keeping your page clean and highly readable.
+:::
+:::
+
+## 3. Styling Bullet Lists or Tables
+If you want to apply a style to an entire block—like your lists or tables—without adding classes to every single line, wrap them in a fenced div:
+
+::: {.text-muted .small}
+- This list is formatted with smaller, muted text.
+- It is excellent for footnotes, disclaimers, or minor references.
+- All elements inside inherit these text rules.
+:::
+
+
+##  4. Nesting Fenced Divs
+If you want to place a fenced div inside another one, simply increase the number of colons for the outer block so Quarto knows where it starts and ends:markdown:::: {.border .p-4}
+This is the outer container block.
+
+:::: {.border .p-5}
+This is the outer container block.
+
+::: {.text-success}
+  This is an inner block with green text.
+:::
+
+::::
+
+## 6. Customer Style
+::: {.my-custom-box-style}
+This content leverages the custom CSS stylesheet we linked in the YAML header.
+Define this style in your custom CSS file, and then apply it to any fenced div by using the class name.
+:::
+
+
+# Callouts
+
+## 1. Standard Callouts
+
+::: {.callout-note}
+### Note
+This is a standard note callout. Use this for general, neutral information you want readers to notice.
+:::
+
+## 2. Custom Callouts - Tip
+::: {.callout-tip}
+### Tip
+This is a tip callout. Great for shortcuts, helpful hints, or best practices.
+:::
+
+## 3. Custom Callouts - Important
+
+::: {.callout-important}
+### Important
+This is an important callout. Use this for critical details that shouldn't be missed.
+:::
+
+## 4. Custom Callouts - Warning and Caution
+::: {.callout-warning}
+### Warning
+This is a warning callout. Ideal for alerting users about potential errors or unexpected outcomes.
+:::
+
+## 5. Custom Callouts - Caution
+::: {.callout-caution}
+### Caution
+This is a caution callout. Typically used to advise users about dangerous steps or data loss.
+:::
+
+
+## 6. Custom Callouts - Success
+::: {.callout-success}
+### Success
+This is a success callout. Use this to highlight positive results, achievements, or successful operations
+:::
+
+
+## 7. Custom Callouts - Question
+::: {.callout-question}
+### Question
+This is a question callout. Perfect for prompting users to think, reflect, or consider alternatives
+:::
+
+
+# Advanced Callouts 
+You can control how callout blocks behave and look by adding specific attributes inside the curly braces {}.
+
+## 1. Collapsible Callouts
+If you have a long explanation or solution that you want to hide by default, make it collapsible using collapse="true":
+
+::: {.callout-tip collapse="true"}
+### 🔍 Click to reveal the Solution
+
+To fix the rendering issue, make sure your `.css` filename matches exactly what is specified inside your document's YAML header.
+:::
+
+::: {.callout-tip collapse="false"}
+### 🔍 Click to reveal the Toogle Solution
+This is false setting
+To fix the rendering issue, make sure your `.css` filename matches exactly what is specified inside your document's YAML header.
+:::
+
+
+## 2. Clean Look (Removing Icons)
+If you want the color-coded box but prefer a cleaner look without the default icon, use icon="false":
+
+::: {.callout-note icon="false"}
+### Minimalist Callout
+This box uses the note styling but completely hides the icon graphic for a cleaner visual layout.
+:::
+
+
+## 3. Minimal Styling (Border Only)
+Quarto has built-in layout styles for callouts. You can change appearance="minimal" to get a clean left-border line instead of a fully filled background block:
+
+::: {.callout-warning appearance="minimal"}
+### Heads Up!
+This callout uses the minimal look. It has a colored left border with no background fills.
+:::

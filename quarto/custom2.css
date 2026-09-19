@@ -1,0 +1,59 @@
+/* ==========================================================================
+   CUSTOM QUARTO STYLESHEET
+   ========================================================================== */
+
+/* 1. Global Document Styles */
+body {
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: #333333;
+}
+
+/* 2. Main Heading Colors */
+h1, h2, h3, h4 {
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+/* 3. Table of Contents (TOC) Customization */
+/* Change the color of all inactive TOC links */
+#TOC a {
+  color: #7f8c8d !important;
+  transition: color 0.2s ease-in-out;
+}
+
+/* Change color when hovering over a TOC link */
+#TOC a:hover {
+  color: #2980b9 !important;
+  text-decoration: underline;
+}
+
+/* Style the currently active TOC link (as you scroll) */
+#TOC a.active {
+  color: #2980b9 !important; 
+  font-weight: bold;
+}
+
+/* Change the vertical active section line color on the left of the TOC */
+html {
+  --bs-toc-active-border-color: #2980b9 !important;
+}
+
+/* 4. Code Blocks */
+code {
+  color: #e74c3c;
+  background-color: #f8f9fa;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+}
+
+/* 5. Hyperlinks in Main Body */
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

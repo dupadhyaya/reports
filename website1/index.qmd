@@ -1,0 +1,44 @@
+---
+title: "Motor Trend Car Road Tests Analysis"
+date: last-modified
+---
+
+## Introduction
+This website displays performance attributes of various automobile models from the classic `mtcars` dataset. 
+
+::: {.callout-note}
+This entire site is dynamically generated using Quarto and R.
+:::
+
+## Fuel Efficiency vs. Weight
+Let's look at how vehicle weight affects miles per gallon (MPG). 
+
+```{r}
+#| label: plot-mpg
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-align: center
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(aes(color = factor(cyl)), size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "gray") +
+  labs(
+    title = "MPG vs Weight",
+    x = "Weight (1000 lbs)",
+    y = "Miles per Gallon",
+    color = "Cylinders"
+  ) +
+  theme_minimal()
+```
+
+## Dataset Summary Table
+Here is the raw data preview utilizing our custom `.striped` and `.hover` table layouts.
+
+```{r}
+#| label: table-summary
+#| echo: false
+knitr::kable(head(mtcars), format = "markdown")
+```
+: Sample Data Overview {.striped .hover}

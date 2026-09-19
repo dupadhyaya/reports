@@ -1,0 +1,31 @@
+---
+title: "Standalone Performance Report"
+author: "Analytics Team"
+format:
+  html:
+    embed-resources: true    # <--- This compiles everything into ONE file
+    toc: true
+    toc-expand: true
+    css: styles.css          # This external CSS file will be safely embedded
+---
+
+## Introduction
+
+This document is entirely self-contained. The external stylesheet `styles.css` and the image below are bundled directly inside this generated HTML file.
+
+## About the University
+
+You can safely include local images like this dashboard preview:
+
+![University Logo](aulogo.png)
+
+## Data Summary
+
+::: {.callout-note}
+Because `embed-resources` is enabled, you can email this single HTML file to colleagues, and they will see the icons, images, and custom table styles perfectly.
+:::
+
+
+## Important Details to Note
+- File Size: Because images and stylesheets are encoded directly into the HTML code, the final .html file size will be larger than standard web pages.
+- Deprecation Notice: You might see older tutorials online referencing self-contained: true. Quarto officially deprecated that option—embed-resources: true is the current, modern way to handle standalone document bundling.

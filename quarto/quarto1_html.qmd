@@ -1,0 +1,96 @@
+---
+title: "My Document"
+format:
+    html:
+        theme:
+          - custom1.scss
+        toc: true
+        toc-depth: 4
+        toc-title: "Table of Contents"
+        code-fold: true
+        toc-expand: 2
+        code-summary: "Click to show/hide code"
+        toc-color: "#000000"
+        css:
+          - custom2.css
+          - custom3_table.css
+---
+
+# Heading 1 
+
+This text is in the first section. It has a few lines of text to demonstrate the table of contents functionality.
+
+- **Bold Title:** Short descriptive fragment.
+- *Italic Title:* Another brief detail.
+
+## Heading 1.1
+This text is in the first subsection. It has a few lines of text to demonstrate the table of contents functionality.
+
+| Product | Category | Price | Status |
+|---------|----------|-------|--------|
+| Laptop  | Electronics| $999  | In Stock |
+| Desk Chair | Office | $150  | Shipped |
+| Keyboard | Electronics| $75   | Backorder |
+
+: My Custom Table {.striped .hover}
+
+
+### Heading 1.1.1
+This text is in the first sub-subsection. It has a few lines of text to demonstrate the table of contents functionality.
+
+- Visual Features Triggered by this Setup:Alignment:
+    -  The colons (:--- vs :---:) in the separator row handle text alignment perfectly (left-aligned text, centered numbers).
+    - Header Row: Automatically turns dark slate blue with white text due to .table thead th.
+    - Zebra Striping: Alternates rows between pure white and subtle grey automatically because of .striped.
+    - Hover Interaction: Highlighting rows light blue when you move your mouse over them triggers because of .hover.
+
+#### Heading 1.1.1.1
+this text is in the first sub-sub-subsection. It has a few lines of text to demonstrate the table of contents functionality.
+
+| Column 1 | Column 2 |
+|----------|----------|
+| Data     | Data     |
+: Fancy Table Name {.my-fancy-table}
+
+
+## Heading 1.2
+This text is in the second subsection. It has a few lines of text to demonstrate the table of contents functionality.
+
+Have you done these tasks
+
+- [x] Finished task
+- [ ] Unfinished task
+
+
+# Heading 2
+This text is in the second section. It has a few lines of text to demonstrate the table of contents functionality.
+
+Term 1
+: Definition of the first term
+
+Term 2
+: Definition of the second term
+
+### Product Catalog Overview
+
+Below is the updated inventory status for the third quarter. Move your mouse cursor over the rows to see the custom hover highlights in action.
+
+| Item ID | Product Name | Department | Stock Level | Status |
+|:---|:-----|:-----|:---:|:---|
+| #1024 | Ergonomic Desk Chair | Furniture | 42 | In Stock |
+| #1025 | Mechanical Keyboard | Electronics | 0 | Out of Stock |
+| #1026 | 27-inch 4K Monitor | Electronics | 15 | Low Stock |
+| #1027 | Standing Desk | Furniture | 8 | In Stock |
+| #1028 | Noise-Canceling Headphones | Audio | 114 | In Stock |
+
+: 2026 Q3 Product Inventory Status {.striped .hover}
+
+
+
+::: {.light-content}
+This is showed in light mode
+:::
+
+::: {.dark-content}
+This is showed in dark mode
+:::

@@ -1,0 +1,10 @@
+
+/*-- scss:defaults --*/
+
+$toc-color: #9a2e1b;          /* Inactive TOC links color */
+$toc-active-border: #d5e91e;  /* Active item left border line color */
+
+/*-- scss:rules --*/
+
+/* Quarto uses the global link color for the active TOC text by default,  but you can target the active class explicitly here if needed */
+#TOC a.active { color: #e91e63;}

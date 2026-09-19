@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Motor Trend Car Road Tests Analysis",
+    "section": "",
+    "text": "This website displays performance attributes of various automobile models from the classic mtcars dataset.\n\n\n\n\n\n\nNote\n\n\n\nThis entire site is dynamically generated using Quarto and R."
+  },
+  {
+    "objectID": "index.html#introduction",
+    "href": "index.html#introduction",
+    "title": "Motor Trend Car Road Tests Analysis",
+    "section": "",
+    "text": "This website displays performance attributes of various automobile models from the classic mtcars dataset.\n\n\n\n\n\n\nNote\n\n\n\nThis entire site is dynamically generated using Quarto and R."
+  },
+  {
+    "objectID": "index.html#fuel-efficiency-vs.-weight",
+    "href": "index.html#fuel-efficiency-vs.-weight",
+    "title": "Motor Trend Car Road Tests Analysis",
+    "section": "Fuel Efficiency vs. Weight",
+    "text": "Fuel Efficiency vs. Weight\nLet’s look at how vehicle weight affects miles per gallon (MPG).\n\nlibrary(ggplot2)\n\nggplot(mtcars, aes(x = wt, y = mpg)) +\n  geom_point(aes(color = factor(cyl)), size = 3) +\n  geom_smooth(method = \"lm\", se = FALSE, color = \"gray\") +\n  labs(\n    title = \"MPG vs Weight\",\n    x = \"Weight (1000 lbs)\",\n    y = \"Miles per Gallon\",\n    color = \"Cylinders\"\n  ) +\n  theme_minimal()"
+  },
+  {
+    "objectID": "index.html#dataset-summary-table",
+    "href": "index.html#dataset-summary-table",
+    "title": "Motor Trend Car Road Tests Analysis",
+    "section": "Dataset Summary Table",
+    "text": "Dataset Summary Table\nHere is the raw data preview utilizing our custom .striped and .hover table layouts.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nmpg\ncyl\ndisp\nhp\ndrat\nwt\nqsec\nvs\nam\ngear\ncarb\n\n\n\n\nMazda RX4\n21.0\n6\n160\n110\n3.90\n2.620\n16.46\n0\n1\n4\n4\n\n\nMazda RX4 Wag\n21.0\n6\n160\n110\n3.90\n2.875\n17.02\n0\n1\n4\n4\n\n\nDatsun 710\n22.8\n4\n108\n93\n3.85\n2.320\n18.61\n1\n1\n4\n1\n\n\nHornet 4 Drive\n21.4\n6\n258\n110\n3.08\n3.215\n19.44\n1\n0\n3\n1\n\n\nHornet Sportabout\n18.7\n8\n360\n175\n3.15\n3.440\n17.02\n0\n0\n3\n2\n\n\nValiant\n18.1\n6\n225\n105\n2.76\n3.460\n20.22\n1\n0\n3\n1\n\n\n\n\n\n: Sample Data Overview {.striped .hover}"
+  }
+]
