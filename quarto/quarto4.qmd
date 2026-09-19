@@ -1,0 +1,6 @@
+---
+title: "Visual Mode"
+format: html
+---
+
+there are `{r} nrow(mtcars)` observations in mtcars data set
