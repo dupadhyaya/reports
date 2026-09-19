@@ -1,0 +1,8 @@
+Rscript -e 'rsconnect::rpubsUpload(
+  title = "Motor Trend Car Road Tests Analysis",
+  contentFile = "docs/index.html",
+  originalDoc = "index.qmd",
+  id = "https://api.rpubs.com/api/v1/document/1460289/8d3aca5406ab4b0eba9a691c1cd3eb8d"
+)'
+
+https://rpubs.com/dupadhyaya/1460289

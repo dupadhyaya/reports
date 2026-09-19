@@ -42,3 +42,26 @@ Here is the raw data preview utilizing our custom `.striped` and `.hover` table 
 knitr::kable(head(mtcars), format = "markdown")
 ```
 : Sample Data Overview {.striped .hover}
+
+
+
+
+```{r}
+#| label: plot-mpg-hp
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-align: center
+library(ggplot2)
+
+ggplot(mtcars, aes(x = mpg, y = hp)) +
+  geom_point(aes(color = factor(cyl)), size = 3) +
+  geom_smooth(method = "lm", se = FALSE, color = "gray") +
+  labs(
+    title = "MPG vs Horsepower",
+    x = "Miles per Gallon",
+    y = "Horsepower",
+    color = "Cylinders"
+  ) +
+  theme_minimal()
+```

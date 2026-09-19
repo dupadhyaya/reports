@@ -15,3 +15,4 @@ format:
     css: styles.css
     toc: true
     toc-expand: false
+    embed-resources: true
