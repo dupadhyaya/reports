@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -73,26 +108,74 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<div class="cell" data-layout-align="center">
-<div class="cell-output-display">
-<div>
-<p></p><figure class="figure"><p></p>
-<div>
-<pre class="mermaid mermaid-js">graph TD
-    A[Start] --&gt; B{Is it working?}
-    B -- Yes --&gt; C[Great!]
-    B -- No --&gt; D[Check the code]   
-</pre>
-</div>
-<p></p></figure><p></p>
-</div>
-</div>
-</div>
+<section id="about-mermaid-diagrams" class="level2">
+<h2 class="anchored" data-anchor-id="about-mermaid-diagrams">About Mermaid Diagrams</h2>
+<ul>
+<li><p>Mermaid is a JavaScript-based diagramming tool that allows you to create diagrams and visualizations directly in your Markdown documents. Mermaid looks different in HTML vs Typst PDF because it is rendered through different pipelines.</p></li>
+<li><p>In HTML, Mermaid is usually rendered by the browser using JavaScript: So the diagram can use browser fonts, CSS, responsive layout, scrolling, and available screen width.</p></li>
+<li><p>In Typst PDF, Quarto has to turn the Mermaid diagram into a static graphic first, then place that graphic into the PDF:</p></li>
+<li><p>That means the diagram is constrained by the PDF page size, margins, figure box, image scaling, and whatever renderer Quarto uses behind the scenes</p></li>
+</ul>
+<p>Common differences:</p>
+<ul>
+<li>Page size is fixed in PDF: HTML has flexible width; PDF has a hard page boundary.</li>
+<li>Fonts differ: browser fonts and PDF fonts may not match.</li>
+<li>Scaling differs: a diagram may be shrunk to fit a Typst page.</li>
+<li>Wide diagrams suffer more: flowchart LR, sequence diagrams, and Gantt charts often get compressed.</li>
+<li>CSS behaves differently: HTML CSS does not necessarily affect the static diagram used in Typst.</li>
+<li>Interactive widgets disappear: HTML can render interactive/responsive content; PDF gets static output only.</li>
+<li>Captions and figure sizing differ: fig-width/fig-height are interpreted differently across formats.</li>
+</ul>
+<p>A typical fix is to use format-specific options:</p>
+<ul>
+<li>%%| fig-width: 10</li>
+<li>%%| fig-height: 6</li>
+<li>%%| fig-align: center</li>
+<li>%%{init: {“theme”: “default”, “themeVariables”: {“fontSize”: “12px”}}}%%</li>
+<li>flowchart TD
+<ul>
+<li>A[Student applies] –&gt; B[University verifies documents]</li>
+<li>B –&gt; C{Complete?}</li>
+</ul></li>
+</ul>
+<p>For wide diagrams in Typst/PDF, use a landscape page:</p>
+<ul>
+<li>#pagebreak()</li>
+<li>#page(flipped: true)[</li>
+</ul>
+<p>Mermaid diagrams can be placed on a landscape page in Typst PDF to give them more horizontal space. This is especially useful for wide flowcharts, sequence diagrams, and Gantt charts that may not fit well on a standard portrait page.</p>
+<ul>
+<li>%%| fig-width: 11</li>
+<li>%%| fig-height: 6</li>
+<li>%%| fig-align: center</li>
+<li>graph TD
+<ul>
+<li>A[Start] –&gt; B{Is it working?}</li>
+<li>B – Yes –&gt; C[Great!]</li>
+<li>B – No –&gt; D[Check the code]</li>
+</ul></li>
+</ul>
+<section id="short-version" class="level4">
+<h4 class="anchored" data-anchor-id="short-version">Short version:</h4>
+<p>HTML renders Mermaid as a web diagram; Typst PDF embeds it as a fixed-size print graphic. So for PDF, you often need larger figure dimensions, smaller Mermaid fonts, more vertical layouts, or landscape pages</p>
+</section>
+</section>
 <section id="mermaid-diagram-with-options" class="level2">
 <h2 class="anchored" data-anchor-id="mermaid-diagram-with-options">Mermaid Diagram with Options</h2>
 <p>The themes, roughly: - default: standard Mermaid look - neutral: cleaner, more publication-friendly - dark: dark background styling - forest: green-toned theme - base: customizable theme, best when using themeVariables</p>
 <ul>
 <li>%%{init: {“flowchart”: {“curve”: “basis”, “htmlLabels”: true}}}%%</li>
+</ul>
+</section>
+<section id="simple-mermaid-flowchart" class="level2">
+<h2 class="anchored" data-anchor-id="simple-mermaid-flowchart">Simple Mermaid Flowchart</h2>
+<ul>
+<li>graph LR
+<ul>
+<li>A[Start] –&gt; B{Is it working?}</li>
+<li>B – Yes –&gt; C[Great!]</li>
+<li>B – No –&gt; D[Check the code]</li>
+</ul></li>
 </ul>
 <div class="cell" data-layout-align="right">
 <div class="cell-output-display">
@@ -113,6 +196,15 @@ graph LR
 </section>
 <section id="mermaid-diagrams-with-captions-and-references" class="level2">
 <h2 class="anchored" data-anchor-id="mermaid-diagrams-with-captions-and-references">Mermaid Diagrams with Captions and References</h2>
+<ul>
+<li>flowchart LR
+<ul>
+<li>A[Hard Edge] –&gt;|Edge| B(Round Edge)</li>
+<li>B –&gt; C{Decision}</li>
+<li>C –&gt;|One| D[Result 1]</li>
+<li>C –&gt;|Two| E[Result 2]</li>
+</ul></li>
+</ul>
 <div style="max-width: 500px; margin: auto;">
 <div class="cell" data-fig-width="8" data-fig-height="5" data-layout-align="left">
 <div class="cell-output-display">
@@ -176,6 +268,52 @@ flowchart TD
 <section id="admission-1-to-1-process" class="level2">
 <h2 class="anchored" data-anchor-id="admission-1-to-1-process">Admission 1 to 1 Process</h2>
 <div class="cell" data-fig-width="14" data-fig-height="8" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode default code-with-copy"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>%%{init: {"theme":"forest", "sequence": {"showSequenceNumbers": true, "mirrorActors": false}}}%%</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>sequenceDiagram</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    actor Student</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    participant University</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    participant Admissions as Admissions Office</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    participant Portal as Application Portal</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    participant Committee as Review Committee</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    Student-&gt;&gt;Portal: Create account</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    Portal--&gt;&gt;Student: Confirm registration</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    Student-&gt;&gt;Portal: Submit application form</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    Student-&gt;&gt;Portal: Upload transcripts and documents</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    Student-&gt;&gt;Portal: Pay application fee if applicable</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    Portal-&gt;&gt;Admissions: Forward completed application</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    Admissions-&gt;&gt;Admissions: Verify documents</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    alt Documents incomplete</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Request missing documents</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        Student-&gt;&gt;Portal: Upload missing documents</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        Portal-&gt;&gt;Admissions: Send updated application</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    else Documents complete</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        Admissions-&gt;&gt;Committee: Send application for review</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    end</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    Committee-&gt;&gt;Committee: Evaluate application</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    alt Accepted</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        Committee--&gt;&gt;Admissions: Recommend admission</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Send offer letter with Fee Due date</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>        Student--&gt;&gt;Admissions: Accept offer</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>        Student--&gt;&gt;Portal : Pay Fees (Part/ Full)</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>        Note Right of Student: Student can pay fees in installments &lt;br/&gt; if allowed by the university</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Confirm Fee Payment</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Send enrollment instructions</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>        Note Right of Portal: Student can access the portal &lt;br/&gt; for enrolment  and program registration &lt;br/&gt; and other information after full payment only</span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    else Waitlisted</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>        Committee--&gt;&gt;Admissions: Place on waitlist</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Notify waitlist status</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    else Rejected</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>        Committee--&gt;&gt;Admissions: Decline application</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>        Admissions--&gt;&gt;Student: Send rejection notice</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    end</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div id="fig-admission" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">

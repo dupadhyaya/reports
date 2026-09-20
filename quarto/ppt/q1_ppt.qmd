@@ -1,0 +1,60 @@
+---
+title: "Admissions Process"
+subtitle: "Quarto PowerPoint Example"
+author: "Admissions Office"
+format:
+  pptx:
+    slide-level: 2
+    reference-doc: "custom-template.potx"
+---
+
+# Overview
+
+## Admissions Workflow
+
+- Student submits application
+- University verifies documents
+- Committee reviews application
+- Final decision is sent to student
+
+## Admission Flow Diagram
+
+```{mermaid}
+flowchart TD
+    A[Student applies] --> B[University verifies documents]
+    B --> C{Complete?}
+    C -->|No| D[Request missing documents]
+    D --> B
+    C -->|Yes| E[Review application]
+    E --> F{Decision}
+    F -->|Accepted| G[Offer letter]
+    F -->|Rejected| H[Rejection notice]
+```
+
+## Admissions Timeline
+
+```{mermaid}
+gantt
+    title Admissions Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d %b
+    section Application
+    Submit form       :a1, 2026-07-01, 7d
+    Document review   :a2, after a1, 10d
+    section Decision
+    Committee review  :b1, after a2, 14d
+    Decision made     :b2, after b1, 3d
+```
+
+# Summary
+
+## Key Points
+
+- Use `format: pptx` in YAML
+- Use `##` for individual slides
+- Mermaid diagrams can be included directly
+- Render with:
+
+```bash
+quarto render q1_ppt.qmd --to pptx
+```

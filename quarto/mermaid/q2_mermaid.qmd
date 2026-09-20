@@ -1,0 +1,100 @@
+---
+title: "Quarto Mermaid Diagrams"
+subtitle: "Typst PDF examples"
+author: "Admissions Office"
+format:
+  typst:
+    toc: true
+    number-sections: true
+    mermaid:
+      theme: default
+---
+# Overview
+This document shows Mermaid diagrams in a Quarto document rendered with the
+Typst PDF engine. The examples use `%%|` for Quarto chunk options inside
+Mermaid blocks.
+# Admission Workflow
+```{mermaid}
+%%| label: fig-admission-flow
+%%| fig-cap: "University admission workflow"
+%%| fig-width: 8
+%%| fig-height: 10
+%%| out-width: "80%"
+%%| fig-align: center
+%%{init: {"theme": "default", "flowchart": {"nodeSpacing": 30, "rankSpacing": 45}, "themeVariables": {"fontSize": "12px"}}}%%
+flowchart TD
+    A[Student applies] --> B[University verifies documents]
+    B --> C{Complete?}
+    C -->|No| D[Request missing documents]
+    D --> B
+    C -->|Yes| E[Review application]
+    E --> F{Decision}
+    F -->|Accepted| G[Send offer letter]
+    F -->|Waitlisted| H[Notify waitlist status]
+    F -->|Rejected| I[Send rejection notice]
+```
+See @fig-admission-flow for the main admission workflow.
+# Admission Sequence
+```{mermaid}
+%%| label: fig-admission-sequence
+%%| fig-cap: "Student and university admission process"
+%%| fig-width: 12
+%%| fig-height: 5.5
+%%| fig-align: center
+%%{init: {"theme": "default", "sequence": {"showSequenceNumbers": true, "mirrorActors": false}, "themeVariables": {"fontSize": "12px"}}}%%
+sequenceDiagram
+    actor Student
+    participant Portal as Application Portal
+    participant Admissions as Admissions Office
+    participant Committee as Review Committee
+    Student->>Portal: Create account
+    Portal-->>Student: Confirm registration
+    Student->>Portal: Submit application and documents
+    Portal->>Admissions: Forward completed application
+    Admissions->>Admissions: Verify documents
+    alt Documents incomplete
+        Admissions-->>Student: Request missing documents
+        Student->>Portal: Upload missing documents
+        Portal->>Admissions: Send updated application
+    else Documents complete
+        Admissions->>Committee: Send application for review
+        Committee-->>Admissions: Return decision
+        Admissions-->>Student: Notify admission decision
+    end
+```
+# Admissions Timeline
+The Gantt chart is placed on a landscape page because timeline diagrams are
+wide and can become compressed on portrait PDF pages.
+```{=typst}
+#pagebreak()
+#page(flipped: true)[
+```
+```{mermaid}
+%%| label: fig-admissions-gantt
+%%| fig-cap: "Admissions timeline"
+%%| fig-width: 11
+%%| fig-height: 5.5
+%%| fig-align: center
+%%{init: {"theme": "default", "gantt": {"barHeight": 22, "fontSize": 11}}}%%
+gantt
+    title Admissions Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d %b
+    section Application
+    Submit form       :a1, 2026-07-01, 7d
+    Document review   :a2, after a1, 10d
+    section Decision
+    Committee review  :b1, after a2, 14d
+    Decision made     :b2, after b1, 3d
+    section Enrollment
+    Accept offer      :c1, after b2, 7d
+    Pay deposit       :c2, after c1, 5d
+```
+```{=typst}
+]
+#pagebreak()
+```
+# Notes
+For Typst PDF output, Mermaid diagrams are static graphics. If a diagram looks
+compressed, prefer top-to-bottom layouts, reduce Mermaid font size, increase
+`fig-width` and `fig-height`, or move wide diagrams to a landscape page.

@@ -5,14 +5,55 @@ format:
         mermaid:
             theme: default
 ---
+## About Mermaid Diagrams
 
-```{mermaid}
-%%| fig-align: center
-graph TD
-    A[Start] --> B{Is it working?}
-    B -- Yes --> C[Great!]
-    B -- No --> D[Check the code]   
-```
+- Mermaid is a JavaScript-based diagramming tool that allows you to create diagrams and visualizations directly in your Markdown documents.
+Mermaid looks different in HTML vs Typst PDF because it is rendered through different pipelines.
+
+- In HTML, Mermaid is usually rendered by the browser using JavaScript:
+So the diagram can use browser fonts, CSS, responsive layout, scrolling, and available screen width.
+
+- In Typst PDF, Quarto has to turn the Mermaid diagram into a static graphic first, then place that graphic into the PDF:
+
+- That means the diagram is constrained by the PDF page size, margins, figure box, image scaling, and whatever renderer Quarto uses behind the scenes
+
+Common differences:
+
+- Page size is fixed in PDF: HTML has flexible width; PDF has a hard page boundary.
+- Fonts differ: browser fonts and PDF fonts may not match.
+- Scaling differs: a diagram may be shrunk to fit a Typst page.
+- Wide diagrams suffer more: flowchart LR, sequence diagrams, and Gantt charts often get compressed.
+- CSS behaves differently: HTML CSS does not necessarily affect the static diagram used in Typst.
+- Interactive widgets disappear: HTML can render interactive/responsive content; PDF gets static output only.
+- Captions and figure sizing differ: fig-width/fig-height are interpreted differently across formats.
+
+A typical fix is to use format-specific options:
+
+- %%| fig-width: 10
+- %%| fig-height: 6
+- %%| fig-align: center
+- %%{init: {"theme": "default", "themeVariables": {"fontSize": "12px"}}}%%
+- flowchart TD
+    - A[Student applies] --> B[University verifies documents]
+    - B --> C{Complete?}
+
+For wide diagrams in Typst/PDF, use a landscape page:
+
+- #pagebreak()
+- #page(flipped: true)[
+
+Mermaid diagrams can be placed on a landscape page in Typst PDF to give them more horizontal space. This is especially useful for wide flowcharts, sequence diagrams, and Gantt charts that may not fit well on a standard portrait page.
+
+- %%| fig-width: 11
+- %%| fig-height: 6
+- %%| fig-align: center
+- graph TD
+    - A[Start] --> B{Is it working?}
+    - B -- Yes --> C[Great!]
+    - B -- No --> D[Check the code]   
+
+#### Short version:
+HTML renders Mermaid as a web diagram; Typst PDF embeds it as a fixed-size print graphic. So for PDF, you often need larger figure dimensions, smaller Mermaid fonts, more vertical layouts, or landscape pages
 
 ## Mermaid Diagram with Options
 
@@ -26,6 +67,12 @@ The themes, roughly:
 
 + %%{init: {"flowchart": {"curve": "basis", "htmlLabels": true}}}%%
 
+## Simple Mermaid Flowchart
+
+- graph LR
+    - A[Start] --> B{Is it working?}
+    - B -- Yes --> C[Great!]
+    - B -- No --> D[Check the code]  
 ```{mermaid}
 %%| fig-align: right
 %%{init: {"flowchart": {"curve": "basis", "htmlLabels": true}}}%%
@@ -39,6 +86,11 @@ graph LR
 
 ## Mermaid Diagrams with Captions and References
 
+- flowchart LR
+   - A[Hard Edge] -->|Edge| B(Round Edge)
+   - B --> C{Decision}
+   - C -->|One| D[Result 1]
+   - C -->|Two| E[Result 2]
 
 ::: {style="max-width: 500px; margin: auto;"}
 ```{mermaid}
@@ -94,7 +146,7 @@ flowchart TD
 %%| fig-width: 14
 %%| fig-height: 8
 %%| fig-align: center
-%%| echo: false
+%%| echo: true
 %%{init: {"theme":"forest", "sequence": {"showSequenceNumbers": true, "mirrorActors": false}}}%%
 
 sequenceDiagram

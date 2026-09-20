@@ -1,0 +1,118 @@
+---
+title: "Quarto and Dot"
+format: html
+---
+
+# Abouts Dots
+
+In Quarto, Graphviz DOT diagrams work almost like Mermaid, using a fenced code block.
+
+## Dot1
+```{dot}
+digraph G {
+  rankdir = TB;
+
+  Student -> Portal;
+  Portal -> Admissions;
+  Admissions -> Committee;
+  Committee -> Admissions;
+  Admissions -> Student;
+}
+```
+
+
+
+## Dot2
+
+```{dot}
+//| label: fig-admission-dot
+//| fig-cap: "Admission process using Graphviz DOT"
+//| fig-width: 7
+//| fig-height: 5
+//| fig-align: center
+
+digraph G {
+  rankdir = TB;
+
+  Student [shape=box];
+  Portal [shape=box, label="Application Portal"];
+  Admissions [shape=box, label="Admissions Office"];
+  Committee [shape=box, label="Review Committee"];
+
+  Student -> Portal [label="Submit application"];
+  Portal -> Admissions [label="Forward application"];
+  Admissions -> Committee [label="Send for review"];
+  Committee -> Admissions [label="Decision"];
+  Admissions -> Student [label="Notify decision"];
+}
+```
+
+
+## Dot3
+
+```{dot}
+digraph G {
+  rankdir = LR;
+
+  Apply -> Verify -> Review -> Decision;
+}
+```
+## Dot with Decisions
+```{dot}
+//| label: fig-admission-decision
+//| fig-cap: "Admission decision flow"
+
+digraph G {
+  rankdir = TB;
+  node [shape=box, style="rounded,filled", fillcolor="#EEF6FF", color="#2563EB"];
+  edge [color="#374151"];
+
+  Apply [label="Student applies"];
+  Verify [label="Verify documents"];
+  Complete [label="Complete?", shape=diamond, fillcolor="#FFF7E6", color="#C99700"];
+  Missing [label="Request missing documents"];
+  Review [label="Review application"];
+  Decision [label="Decision", shape=diamond, fillcolor="#FFF7E6", color="#C99700"];
+  Offer [label="Send offer letter"];
+  Reject [label="Send rejection notice"];
+
+  Apply -> Verify;
+  Verify -> Complete;
+  Complete -> Missing [label="No"];
+  Missing -> Verify;
+  Complete -> Review [label="Yes"];
+  Review -> Decision;
+  Decision -> Offer [label="Accepted"];
+  Decision -> Reject [label="Rejected"];
+}
+```
+## Left to Right
+
+```{dot}
+digraph G {
+  rankdir = LR;
+
+  Apply -> Verify -> Review -> Decision;
+}
+```
+
+
+
+## Setting Graphviz DOT Options
+For Mermaid you used `%%|`; for DOT, use `//|`.
+
+### Common Dot Directions
+
+rankdir = TB;  // top to bottom
+rankdir = LR;  // left to right
+rankdir = BT;  // bottom to top
+rankdir = RL;  // right to left
+
+### Common Shapes
+
+shape=box
+shape=ellipse
+shape=diamond
+shape=folder
+shape=note
+

@@ -1,0 +1,21 @@
+---
+title: "Quarto1 Dashboard"
+format:
+    dashboard: 
+        theme: cosmo
+        css: styles.css
+        toc: true
+        toc-expand: false
+---
+
+
+# About Dashboards in Quarto
+
+
+## Dashboard Layouts
+
+
+## Layouts
+
+
+## 
