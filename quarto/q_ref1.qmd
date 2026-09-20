@@ -1,0 +1,179 @@
+---
+title: "Quarto References"
+format: 
+    html:
+        embed-resources: true
+tbl-cap-location: bottom
+---
+
+# Tables
+
+## Single Table
+::: {.list-table}
+
+- - header 1
+  - header 2
+
+- - row 1 col 1
+  - row 1 col 2
+
+- - row 2 col 1
+  - row 2 col 2
+
+:::
+
+## Table with Caption and Reference
+
+| fruit | price |
+|-------|-------|
+| apple | $1.00 |
+| banana | $0.50 |
+
+: Table 1: Fruit Prices {#tbl-fruit-prices}
+
+See Table @tbl-fruit-prices for the prices of different fruits.
+
+
+## Two Tables with Captions and References
+
+::: {#tbl-panel layout-ncol=2}
+
+| fruit | price |
+|-------|-------|
+| apple | $1.00 |
+| banana | $0.50 |
+
+: Table 1: Fruit Price {#tbl-fruits-price}
+
+| item | price |
+|-------|-------|
+| Shirt | $10.50 |
+| Pants | $20.00 |
+
+: Table 2: Clothes Price {#tbl-clothes-price} 
+
+References to the tables can be made using @tbl-fruits-price and @tbl-clothes-price in the Table Panel @tbl-panel
+
+:::
+
+
+## Embed Resources
+format:
+  html:
+    embed-resources: true
+
+quarto render report.qmd --to html --embed-resources
+
+
+## R 
+```{r}
+#| label: tbl-mtcars-R
+#| tbl-cap: "MTCars-R"
+pacman::p_load(dplyr, knitr, gt, kableExtra, pander, flextable, tinytable, tinytex, reactable, DT)
+
+data <- mtcars
+cat("Table from R- Head\n")
+head(data)
+```
+
+```{r}
+#| label: tbl-mtcars-R-kable
+#| tbl-cap: "MTCars-R-Kable"
+#| results: "asis"
+cat("Table from R- Kable \n")
+print(kable(head(data)))
+```
+
+```{r}
+#| label: tbl-mtcars-R-gt
+#| tbl-cap: "MTCars-R-GT"
+#| results: "asis"
+cat("Table from R- GT\n")
+data %>% head() %>% gt::gt()
+```
+
+```{r}
+#| label: tbl-mtcars-R-kableExtra
+#| tbl-cap: "MTCars-R-KableExtra"
+#| results: "asis"
+cat("Table from R- KableExtra\n")
+#data %>% head() %>% kableExtra::kable_styling()
+cat("Not working\n")
+```
+
+```{r}
+#| label: tbl-mtcars-R-pander
+#| tbl-cap: "MTCars-R-Pander"
+#| results: "asis"
+cat("Table from R- Pander\n")
+pander(head(data))
+```
+
+```{r}
+#| label: tbl-mtcars-R-flextable
+#| tbl-cap: "MTCars-R-Flextable"
+#| results: "asis"
+cat("Table from R- Flextable\n")
+flextable::flextable(head(data))
+```
+
+```{r}
+cat("Table from R- Reactable\n")
+reactable::reactable(head(data))
+```
+
+```{r}
+cat("Table from R- DT\n")
+DT::datatable(head(data))
+
+#cat("Table from R- DT with options\n"  , DT::datatable(head(data), options = list(pageLength = 5, autoWidth = TRUE)))
+```
+
+```{r}
+cat("Table from tinytable\n")
+tinytable::tt(head(data))
+```
+
+
+## Python 
+/Users/du/anaconda3/bin/python
+Set the environment for Python code execution in Quarto. You can specify the path to your Python interpreter if needed.
+
+```{python}
+#| label: tbl-mtcars-P
+#| tbl-cap: "MTCars-P"
+
+from IPython.display import display, HTML, Markdown
+from tabulate import tabulate
+import pandas as pd
+from pydataset import data
+from great_tables import GT, md
+
+data = data("mtcars")
+
+print("Table from Python- Head\n")
+data.head()
+
+print("Table from Python- Tabulate\n")
+
+Markdown(tabulate(data.head(), headers='keys', tablefmt='pipe'))
+
+print("Table from Python- Markdown\n")
+
+Markdown(data.head().to_markdown(index=False))
+
+print("Table from Python- IPython display - HTML\n")
+HTML(data.head().to_html(index=False))
+
+print("Table from Python- Great Tables\n")
+gt = GT(data.head())
+gt
+
+#(GT(gt).tab_header(title='Mtcars Data set'))
+
+#from itables import show
+#show(data.head())
+
+```
+
+Refer table from Python code using @tbl-mtcars-P and from R code using @tbl-mtcars-R

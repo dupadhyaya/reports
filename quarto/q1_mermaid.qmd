@@ -1,0 +1,214 @@
+---
+title: "Quarto Mermaid Diagrams"
+format: 
+    html:
+        mermaid:
+            theme: default
+---
+
+```{mermaid}
+%%| fig-align: center
+graph TD
+    A[Start] --> B{Is it working?}
+    B -- Yes --> C[Great!]
+    B -- No --> D[Check the code]   
+```
+
+## Mermaid Diagram with Options
+
+The themes, roughly:
+- default: standard Mermaid look
+- neutral: cleaner, more publication-friendly
+- dark: dark background styling
+- forest: green-toned theme
+- base: customizable theme, best when using themeVariables
+
+
++ %%{init: {"flowchart": {"curve": "basis", "htmlLabels": true}}}%%
+
+```{mermaid}
+%%| fig-align: right
+%%{init: {"flowchart": {"curve": "basis", "htmlLabels": true}}}%%
+graph LR
+    A[Start] --> B{Is it working?}
+    B -- Yes --> C[Great!]
+    B -- No --> D[Check the code]   
+```
+
+
+
+## Mermaid Diagrams with Captions and References
+
+
+::: {style="max-width: 500px; margin: auto;"}
+```{mermaid}
+%%| fig-width: 8
+%%| fig-height: 5
+%%| fig-align: left
+
+flowchart LR
+    A[Hard Edge] -->|Edge| B(Round Edge)
+    B --> C{Decision}
+    C -->|One| D[Result 1]
+    C -->|Two| E[Result 2]
+```
+:::
+
+## Mermaid Flowchart Top to Bottom
+
+```{mermaid}
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#e8f4ff", "primaryTextColor": "#111827", "lineColor": "#2563eb"}}}%%
+%%| fig-width: 8
+%%| fig-height: 5
+flowchart TD
+    A[Student submits application] --> B[University verifies documents]
+    B --> C{Documents complete?}
+    C -->|No| D[Request missing documents]
+    D --> A
+    C -->|Yes| E[Review application]
+    E --> F{Decision}
+    F -->|Accepted| G[Send offer letter]
+    F -->|Waitlisted| H[Notify waitlist]
+    F -->|Rejected| I[Send rejection]
+```
+
+## Sequence Diagram
+
+- Options
+    - %%{init: {"sequence": {"showSequenceNumbers": true, "mirrorActors": false}}}%%
+    - showSequenceNumbers: show numbered messages
+    - mirrorActors: repeat actors at the bottom
+    - actorMargin: spacing between actors
+    - messageMargin: spacing between messages
+    - boxMargin: spacing around boxes
+
+```{=typst}
+#pagebreak()
+#page(flipped: true)[
+```
+
+## Admission 1 to 1 Process
+```{mermaid}
+%%| label: fig-admission
+%%| fig-cap: "Admission process"
+%%| fig-width: 14
+%%| fig-height: 8
+%%| fig-align: center
+%%| echo: false
+%%{init: {"theme":"forest", "sequence": {"showSequenceNumbers": true, "mirrorActors": false}}}%%
+
+sequenceDiagram
+    actor Student
+    participant University
+    participant Admissions as Admissions Office
+    participant Portal as Application Portal
+    participant Committee as Review Committee
+
+    Student->>Portal: Create account
+    Portal-->>Student: Confirm registration
+
+    Student->>Portal: Submit application form
+    Student->>Portal: Upload transcripts and documents
+    Student->>Portal: Pay application fee if applicable
+
+    Portal->>Admissions: Forward completed application
+    Admissions->>Admissions: Verify documents
+
+    alt Documents incomplete
+        Admissions-->>Student: Request missing documents
+        Student->>Portal: Upload missing documents
+        Portal->>Admissions: Send updated application
+    else Documents complete
+        Admissions->>Committee: Send application for review
+    end
+
+    Committee->>Committee: Evaluate application
+
+    alt Accepted
+        Committee-->>Admissions: Recommend admission
+        Admissions-->>Student: Send offer letter with Fee Due date
+        Student-->>Admissions: Accept offer
+        Student-->>Portal : Pay Fees (Part/ Full)
+        Note Right of Student: Student can pay fees in installments <br/> if allowed by the university
+        Admissions-->>Student: Confirm Fee Payment
+        
+        Admissions-->>Student: Send enrollment instructions
+        Note Right of Portal: Student can access the portal <br/> for enrolment  and program registration <br/> and other information after full payment only
+    else Waitlisted
+        Committee-->>Admissions: Place on waitlist
+        Admissions-->>Student: Notify waitlist status
+    else Rejected
+        Committee-->>Admissions: Decline application
+        Admissions-->>Student: Send rejection notice
+    end
+```
+
+
+## Gantt Chart
+
+
+
+```{mermaid}
+%%| label: fig-admissions-gantt
+%%| fig-cap: "Admissions timeline"
+%%| fig-width: 10
+%%| fig-height: 5
+%%| fig-align: center
+%%{init: {"gantt": {"barHeight": 18, "fontSize": 10}}}%%
+
+gantt
+    title Admissions Timeline
+    dateFormat  YYYY-MM-DD
+    axisFormat  %d-%m
+    section Application
+    Submit form       :a1, 2026-07-01, 7d
+    Document review   :a2, after a1, 10d
+    section Decision
+    Committee review  :b1, after a2, 14d
+    Decision made     :b2, after b1, 3d
+```
+
+```{=typst}
+]
+```
+
+
+## Theme
+```{mermaid}
+%%| label: fig-admission-flow2
+%%| fig-cap: "University admission workflow"
+%%| fig-width: 9
+%%| fig-height: 5
+%%| fig-align: center
+%%{init: {"theme": "base", "flowchart": {"curve": "basis"}, "themeVariables": {"primaryColor": "#eef6ff", "primaryBorderColor": "#2563eb", "lineColor": "#374151"}}}%%
+
+flowchart TD
+    A[Student applies] --> B[University verifies documents]
+    B --> C{Complete?}
+    C -->|No| D[Request missing documents]
+    C -->|Yes| E[Review application]
+    E --> F{Decision}
+    F -->|Accepted| G[Offer letter]
+    F -->|Rejected| H[Rejection notice]
+```
+
+
+## Theme for mermaid diagrams
+
+The theme can be set in the YAML header of the Quarto document. The theme can be set to one of the following: default, forest, dark, neutral, base, or custom. The theme can also be customized using themeVariables.
+
+The themes, roughly:
+
++ default: standard Mermaid look
++ neutral: cleaner, more publication-friendly
+- dark: dark background styling
+- forest: green-toned theme
+- base: customizable theme, best when using themeVariables
+
+
+```{mermaid}
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#e8f4ff", "primaryBorderColor": "#2563eb", "primaryTextColor": "#111827", "lineColor": "#374151"}}}%%
+
+flowchart LR
+    A[Apply] --> B[Review]
+```
