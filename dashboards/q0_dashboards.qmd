@@ -1,0 +1,225 @@
+---
+title: "Types of Dashboard in Quarto"
+format: html
+---
+Quarto dashboards can be built in several styles depending on what you want: static reporting, interactive exploration, live apps, or multi-page analytical products.
+
+**1. Static HTML Dashboard**
+
+Good for reports that render once and are shared as HTML.
+
+```yaml
+---
+title: "Sales Dashboard"
+format:
+  dashboard:
+    embed-resources: true
+---
+```
+
+Uses R/Python chunks, charts, tables, value boxes, etc. Interactivity can come from `plotly`, `DT`, `leaflet`, `reactable`, and similar widgets.
+
+**2. Self-Contained Dashboard**
+
+Same as above, but packaged into one HTML file.
+
+```yaml
+format:
+  dashboard:
+    embed-resources: true
+```
+
+Best for emailing or uploading a single file.
+
+**3. Dashboard With Pages**
+
+You can create multiple dashboard pages using top-level headings.
+
+```markdown
+# Executive Summary
+
+## Row
+
+# Category Analysis
+
+## Row
+
+# Data Table
+
+## Row
+```
+
+Each `#` heading becomes a dashboard page/tab.
+
+**4. Row/Column Layout Dashboard**
+
+Use headings like `## Row` and `## Column` to control layout.
+
+```markdown
+# Overview
+
+## Row
+
+```{r}
+# chart 1
+```
+
+```{r}
+# chart 2
+```
+
+## Column
+
+```{r}
+# chart 3
+```
+```
+
+**5. Dashboard With Value Boxes**
+
+Good for KPI-style layouts.
+
+```r
+#| content: valuebox
+list(
+  title = "Sales",
+  value = "$2.3M",
+  icon = "cash-stack",
+  color = "primary"
+)
+```
+
+**6. Interactive Widget Dashboard**
+
+Uses HTML widgets:
+
+```r
+plotly::ggplotly(p)
+DT::datatable(df)
+leaflet::leaflet()
+reactable::reactable(df)
+```
+
+Good for filtering, tooltips, sorting, maps, and tables.
+
+**7. Shiny Dashboard**
+
+Good when you need live filters, reactive charts, user inputs, and server-side interactivity.
+
+```yaml
+---
+title: "Interactive Sales Dashboard"
+format: dashboard
+server: shiny
+---
+```
+
+Then use Shiny inputs:
+
+```r
+selectInput("region", "Region", choices = unique(df$Region))
+plotOutput("sales_plot")
+```
+
+**8. Observable JS Dashboard**
+
+Good for JavaScript-based interactive visualizations.
+
+```yaml
+---
+title: "Observable Dashboard"
+format: dashboard
+---
+```
+
+Use Observable cells:
+
+````markdown
+```{ojs}
+viewof category = Inputs.select(["Furniture", "Technology", "Office Supplies"])
+```
+````
+
+**9. Python Dashboard**
+
+Use Python chunks with `pandas`, `plotly`, `matplotlib`, `seaborn`, `great_tables`, etc.
+
+```yaml
+---
+title: "Python Dashboard"
+format: dashboard
+jupyter: python3
+---
+```
+
+```python
+import pandas as pd
+import plotly.express as px
+```
+
+**10. Multi-Format Dashboard**
+
+You can define different output formats:
+
+```yaml
+format:
+  dashboard:
+    embed-resources: true
+  html:
+    toc: true
+  typst:
+    toc: true
+```
+
+But dashboard format is mainly for HTML.
+
+**11. Website Dashboard**
+
+You can include dashboards inside a Quarto website.
+
+```yaml
+project:
+  type: website
+```
+
+Then pages like:
+
+```text
+index.qmd
+dashboards/sales.qmd
+dashboards/profit.qmd
+```
+
+**12. Parameterized Dashboard**
+
+Useful for rendering the same dashboard for different regions, departments, or time periods.
+
+```yaml
+params:
+  region: "West"
+```
+
+Then in R:
+
+```r
+df_region <- df |> filter(Region == params$region)
+```
+
+Render with:
+
+```bash
+quarto render dashboard.qmd -P region:West
+```
+
+Common choices:
+
+- Simple shareable dashboard: static/self-contained dashboard
+- Tableau-like dashboard: dashboard + `plotly` + `DT`
+- True filter controls: Shiny dashboard
+- JavaScript-heavy interactive dashboard: Observable dashboard
+- Reusable regional dashboards: parameterized dashboard
+- Portfolio/reporting hub: Quarto website with dashboard pages
+
+## Links to share
+
+[https://learning.nceas.ucsb.edu/2024-03-ucsb-faculty/session_10.html](https://learning.nceas.ucsb.edu/2024-03-ucsb-faculty/session_10.html)

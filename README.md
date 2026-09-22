@@ -12,3 +12,6 @@ Report writing with Quarto and markdown.
    ```
 
 The rendered site is written to `_site/`.
+
+
+_quarto.yml has been removed

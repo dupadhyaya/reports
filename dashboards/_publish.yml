@@ -1,0 +1,4 @@
+- source: superstore_tableau_dashboard.qmd
+  posit-connect-cloud:
+    - id: 01a0c261-e422-7f7c-8613-0b816bb95135
+      url: https://connect.posit.cloud/dupadhyaya/content/01a0c261-e422-7f7c-8613-0b816bb95135

@@ -1,0 +1,26 @@
+---
+title: "Executive Summary"
+date:   today
+date-format: "MMM YYYY"
+format:
+    typst:
+        template-partials:
+            - typst-show.typ
+            - typst-template.typ
+---
+
+This brief report provides an overview of the key metrics and insights derived from the latest data analysis. The following sections will highlight the most significant findings, trends, and recommendations for strategic decision-making.
+
+[https://youtu.be/craiBTTCeWk](https://youtu.be/craiBTTCeWk)
+
+# Heading 1
+
+## Heading 1.1
+
+```{=typst}
+#blueline()
+```
+
+# Heading 2
+
+

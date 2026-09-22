@@ -1,0 +1,21 @@
+---
+title: "Sidebar"
+format: dashboard
+server: shiny
+---
+
+https://quarto.org/docs/dashboards/inputs.html
+
+# {.sidebar}
+
+Sidebar content
+
+# Plots
+
+```{python}
+```
+
+# Data
+
+```{python}
+```

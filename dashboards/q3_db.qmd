@@ -1,0 +1,84 @@
+---
+title: "Self-Contained Quarto Dashboard"
+author: "Reports"
+format:
+  dashboard:
+    embed-resources: true
+    toc: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+```{r}
+library(dplyr)
+library(ggplot2)
+library(plotly)
+library(DT)
+library(bslib)
+cars <- mtcars |>
+  tibble::rownames_to_column("model") |>
+  mutate(
+    transmission = if_else(am == 1, "Manual", "Automatic"),
+    engine = paste(cyl, "cylinders"),
+    efficiency_group = case_when(
+      mpg >= 25 ~ "High",
+      mpg >= 18 ~ "Medium",
+      TRUE ~ "Low"
+    )
+  )
+summary_stats <- cars |>
+  summarise(
+    models = n(),
+    avg_mpg = mean(mpg),
+    avg_hp = mean(hp),
+    manual_share = mean(transmission == "Manual")
+  )
+by_engine <- cars |>
+  group_by(engine) |>
+  summarise(
+    models = n(),
+    avg_mpg = mean(mpg),
+    avg_hp = mean(hp),
+    avg_weight = mean(wt),
+    .groups = "drop"
+  )
+```
+```{css}
+.dashboard-card {
+  border-radius: 8px;
+}
+.small-note {
+  color: #5f6b7a;
+  font-size: 0.9rem;
+}
+```
+# Overview
+## Row
+```{r}
+#| content: valuebox
+list(
+  title = "Models",
+  value = summary_stats$models,
+  icon = "car-front",
+  color = "primary"
+)
+```
+```{r}
+#| content: valuebox
+list(
+  title = "Average MPG",
+  value = round(summary_stats$avg_mpg, 1),
+  icon = "speedometer2",
+  color = "success"
+)
+```
+```{r}
+#| content: valuebox
+list(
+  title = "Average horsepower",
+  value = round(summary_stats$avg_hp, 0),
+  icon = "activity",
+  color = "warning"
+)
+```

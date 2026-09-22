@@ -1,0 +1,11 @@
+title: Typst
+author: Dhiraj Upadhyaya
+version: 1.0.0
+quarto-required: ">=1.10.0"
+contributes:
+  formats:
+    typst:
+      template-partials:
+        - typst-template.typ
+        - typst-show.typ
+

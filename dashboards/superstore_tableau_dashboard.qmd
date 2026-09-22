@@ -1,0 +1,364 @@
+---
+title: "Superstore Sales Dashboard"
+author: "Reports"
+format:
+  dashboard:
+    embed-resources: true
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+library(dplyr)
+library(readr)
+library(lubridate)
+library(ggplot2)
+library(plotly)
+library(DT)
+library(scales)
+library(tidyr)
+
+orders <- read_csv(
+  "../data/superstore_orders.csv",
+  show_col_types = FALSE,
+  locale = locale(encoding = "UTF-8")
+) |>
+  rename_with(~ gsub("\ufeff", "", .x, fixed = TRUE)) |>
+  mutate(
+    order_date = dmy(`Order Date`),
+    ship_date = dmy(`Ship Date`),
+    order_month = floor_date(order_date, "month"),
+    order_year = year(order_date),
+    profit_margin = if_else(Sales > 0, Profit / Sales, NA_real_),
+    discount_band = case_when(
+      Discount == 0 ~ "No discount",
+      Discount <= 0.2 ~ "Up to 20%",
+      Discount <= 0.4 ~ "21% to 40%",
+      TRUE ~ "Above 40%"
+    )
+  )
+
+kpis <- orders |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    orders = n_distinct(`Order ID`),
+    customers = n_distinct(`Customer ID`),
+    margin = profit / sales
+  )
+
+monthly <- orders |>
+  group_by(order_month) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    orders = n_distinct(`Order ID`),
+    .groups = "drop"
+  )
+
+category <- orders |>
+  group_by(Category, `Sub-Category`) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    quantity = sum(Quantity, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(margin = profit / sales)
+
+region <- orders |>
+  group_by(Region, Segment) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    orders = n_distinct(`Order ID`),
+    .groups = "drop"
+  )
+
+states <- orders |>
+  group_by(`State/Province`, Region) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    orders = n_distinct(`Order ID`),
+    .groups = "drop"
+  ) |>
+  arrange(profit)
+
+top_products <- orders |>
+  group_by(`Product Name`, Category, `Sub-Category`) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    quantity = sum(Quantity, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(desc(sales)) |>
+  slice_head(n = 15)
+
+loss_products <- orders |>
+  group_by(`Product Name`, Category, `Sub-Category`) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    quantity = sum(Quantity, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  arrange(profit) |>
+  slice_head(n = 15)
+
+currency_short <- label_dollar(scale_cut = cut_short_scale())
+```
+
+```{css}
+.value-box-title {  font-weight: 700;}
+.dashboard-card {  border-radius: 8px;}
+.section-note {  color: #5f6b7a;  font-size: 0.9rem;}
+```
+
+# Executive Summary
+
+## Row
+
+```{r}
+#| content: valuebox
+list(  title = "Sales",  value = currency_short(kpis$sales),
+  icon = "cash-stack",  color = "primary")
+```
+
+```{r}
+#| content: valuebox
+list(  title = "Profit",  value = currency_short(kpis$profit),  icon = "graph-up-arrow",  color = if (kpis$profit >= 0) "success" else "danger")
+```
+
+```{r}
+#| content: valuebox
+list(  title = "Orders",  value = comma(kpis$orders),
+  icon = "receipt",  color = "info")
+```
+
+```{r}
+#| content: valuebox
+list(  title = "Profit margin",  value = percent(kpis$margin, accuracy = 0.1),  icon = "percent",  color = "warning")
+```
+
+## Row
+
+```{r}
+#| title: "Monthly sales and profit"
+#| fig-height: 5.5
+
+monthly_long <- monthly |>  pivot_longer(c(sales, profit), names_to = "metric", values_to = "value") |>  mutate(metric = recode(metric, sales = "Sales", profit = "Profit"))
+
+p_monthly <- ggplot(monthly_long, aes(order_month, value, color = metric)) +  geom_line(linewidth = 0.9) +  geom_point(size = 1.7) +  scale_y_continuous(labels = currency_short) +
+  scale_color_manual(values = c("Sales" = "#2f6f9f", "Profit" = "#3f8f5f")) +  labs(x = NULL, y = NULL, color = NULL) +
+  theme_minimal(base_size = 12) +  theme(legend.position = "top")
+
+ggplotly(p_monthly, tooltip = c("x", "y", "color"))
+```
+
+```{r}
+#| title: "Sales and profit by region and segment"
+#| fig-height: 5.5
+
+p_region <- ggplot(region, aes(Region, sales, fill = Segment)) +
+  geom_col(position = "dodge", width = 0.72) +  geom_hline(yintercept = 0, color = "#4b5563") +  scale_y_continuous(labels = currency_short) +  scale_fill_brewer(palette = "Set2") +
+  labs(x = NULL, y = "Sales", fill = "Segment") +  theme_minimal(base_size = 12) +  theme(legend.position = "top")
+
+ggplotly(p_region, tooltip = c("x", "y", "fill"))
+```
+
+# Category Performance
+
+## Row
+
+```{r}
+#| title: "Sub-category sales and profit"
+#| fig-height: 6
+
+p_category <- category |>
+  mutate(`Sub-Category` = reorder(`Sub-Category`, sales)) |>
+  ggplot(aes(
+    sales,
+    `Sub-Category`,
+    color = Category,
+    size = abs(profit),
+    text = paste0(
+      "Category: ", Category,
+      "<br>Sub-category: ", `Sub-Category`,
+      "<br>Sales: ", dollar(sales),
+      "<br>Profit: ", dollar(profit),
+      "<br>Margin: ", percent(margin, accuracy = 0.1)
+    )
+  )) +
+  geom_point(alpha = 0.85) +
+  geom_vline(xintercept = 0, color = "#6b7280") +
+  scale_x_continuous(labels = currency_short) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(x = "Sales", y = NULL, color = "Category", size = "|Profit|") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+
+ggplotly(p_category, tooltip = "text")
+```
+
+```{r}
+#| title: "Profit by discount band"
+#| fig-height: 6
+
+discount_summary <- orders |>
+  group_by(discount_band, Category) |>
+  summarise(
+    sales = sum(Sales, na.rm = TRUE),
+    profit = sum(Profit, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  mutate(discount_band = factor(
+    discount_band,
+    levels = c("No discount", "Up to 20%", "21% to 40%", "Above 40%")
+  ))
+
+p_discount <- ggplot(discount_summary, aes(discount_band, profit, fill = Category)) +
+  geom_col(position = "dodge", width = 0.7) +
+  geom_hline(yintercept = 0, color = "#4b5563") +
+  scale_y_continuous(labels = currency_short) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(x = NULL, y = "Profit", fill = "Category") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+
+ggplotly(p_discount, tooltip = c("x", "y", "fill"))
+```
+
+# Geography
+
+## Row
+
+```{r}
+#| title: "Top states by sales"
+#| fig-height: 5.5
+
+p_top_states <- states |>
+  arrange(desc(sales)) |>
+  slice_head(n = 12) |>
+  mutate(`State/Province` = reorder(`State/Province`, sales)) |>
+  ggplot(aes(
+    sales,
+    `State/Province`,
+    fill = Region,
+    text = paste0(
+      "State: ", `State/Province`,
+      "<br>Region: ", Region,
+      "<br>Sales: ", dollar(sales),
+      "<br>Profit: ", dollar(profit),
+      "<br>Orders: ", comma(orders)
+    )
+  )) +
+  geom_col(width = 0.7) +
+  scale_x_continuous(labels = currency_short) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = "Sales", y = NULL, fill = "Region") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+
+ggplotly(p_top_states, tooltip = "text")
+```
+
+```{r}
+#| title: "Lowest-profit states"
+#| fig-height: 5.5
+
+p_loss_states <- states |>
+  slice_head(n = 12) |>
+  mutate(`State/Province` = reorder(`State/Province`, profit)) |>
+  ggplot(aes(
+    profit,
+    `State/Province`,
+    fill = Region,
+    text = paste0(
+      "State: ", `State/Province`,
+      "<br>Region: ", Region,
+      "<br>Sales: ", dollar(sales),
+      "<br>Profit: ", dollar(profit),
+      "<br>Orders: ", comma(orders)
+    )
+  )) +
+  geom_col(width = 0.7) +
+  geom_vline(xintercept = 0, color = "#4b5563") +
+  scale_x_continuous(labels = currency_short) +
+  scale_fill_brewer(palette = "Set2") +
+  labs(x = "Profit", y = NULL, fill = "Region") +
+  theme_minimal(base_size = 12) +
+  theme(legend.position = "top")
+
+ggplotly(p_loss_states, tooltip = "text")
+```
+
+# Products
+
+## Row
+
+```{r}
+#| title: "Top products by sales"
+
+datatable(
+  top_products |>
+    transmute(
+      Product = `Product Name`,
+      Category,
+      `Sub-Category`,
+      Sales = dollar(round(sales, 0)),
+      Profit = dollar(round(profit, 0)),
+      Quantity = comma(quantity)
+    ),
+  rownames = FALSE,
+  options = list(pageLength = 8, scrollX = TRUE, dom = "tip")
+)
+```
+
+```{r}
+#| title: "Products with largest losses"
+
+datatable(
+  loss_products |>
+    transmute(
+      Product = `Product Name`,
+      Category,
+      `Sub-Category`,
+      Sales = dollar(round(sales, 0)),
+      Profit = dollar(round(profit, 0)),
+      Quantity = comma(quantity)
+    ),
+  rownames = FALSE,
+  options = list(pageLength = 8, scrollX = TRUE, dom = "tip")
+)
+```
+
+# Data
+
+## Row
+
+```{r}
+#| title: "Order-level records"
+
+datatable(
+  orders |>
+    transmute(
+      `Order Date` = order_date,
+      `Order ID`,
+      Segment,
+      Region,
+      State = `State/Province`,
+      Category,
+      `Sub-Category`,
+      Sales = round(Sales, 2),
+      Profit = round(Profit, 2),
+      Discount = percent(Discount, accuracy = 1)
+    ),
+  rownames = FALSE,
+  filter = "top",
+  options = list(pageLength = 10, scrollX = TRUE)
+)
+```

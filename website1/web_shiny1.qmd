@@ -1,0 +1,18 @@
+---
+title: "Sidebar"
+format: dashboard
+---
+    
+# {.sidebar}
+
+Sidebar content
+
+# Plots
+
+```{python}
+```
+
+# Data
+
+```{python}
+```
