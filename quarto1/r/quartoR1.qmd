@@ -1,0 +1,24 @@
+--- 
+title: "Executive Summary"
+date:   last-modified
+date-format: "DD MMM YYYY HH:mm:"
+format: typst
+       
+---
+
+# Introduction
+
+This is a sample report.
+
+```{r}
+#| label: fig-cars
+#| fig-cap: "Cars dataset plot"
+
+plot(cars)
+```
+
+Here is an equation:
+
+$$
+y = mx + c
+$$
