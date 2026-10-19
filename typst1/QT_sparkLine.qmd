@@ -1,0 +1,80 @@
+---
+title: "Quarto + Typst + Spark Lines"
+format: 
+    typst:
+        toc: true
+        page-size: a4
+        orientation: landscape
+        margin:
+            x: 1cm
+            y: 1cm
+
+---
+
+## Quarto Spark Lines
+
+In Quarto reports using R, you can create sparklines—small, compact charts that show trends without axes, legends, or unnecessary labels.
+
+They are particularly useful for your Admissions, LMS, Rankings, and University Performance reports.
+
+Since you generate reports in both HTML and Typst PDF, I recommend using ggplot2 for sparklines. It works with both formats.
+
+| KPI | Value | Trend |
+|---|---:|---|
+| Applications | 25,480 | Small line chart |
+| Enrolments | 8,250 | Small rising trend |
+| Conversion Rate | 32.4% | Small fluctuating trend |
+
+
+### What is a sparkline?
+A sparkline is a miniature chart, usually displayed alongside a KPI.
+
+A sparkline typically has:
+- No X-axis or Y-axis labels.
+- No gridlines or legend.
+- Minimal margins.
+- A thin line, sometimes with a highlighted final point.
+- Consistent scaling when comparing similar metrics.
+
+```{r}
+#| echo: false
+#| eval: true
+
+sparkline <- function(data, x, y, color = "#174EA6") {
+
+  ggplot(data, aes(x = {{ x }}, y = {{ y }})) +
+    geom_line(color = color, linewidth = 1) +
+    geom_point(
+      data = ~ dplyr::slice_max(
+        .x, {{ x }}, n = 1, with_ties = FALSE
+      ),
+      color = color,
+      size = 2
+    ) +
+    theme_void() +
+    theme(
+      plot.margin = margin(1, 1, 1, 1)
+    )
+}
+```
+
+```{r}
+#| echo: false
+#| fig-width: 3
+#| fig-height: 0.6
+#| out-width: "45%"
+library(tidyverse)
+
+admissions <- tibble(  month = 1:12,  applications = c(    120, 180, 220, 350, 420, 580,
+    720, 850, 920, 1100, 1250, 1480  )
+)
+p <- admissions %>%  ggplot(aes(x = month, y = applications)) +  geom_line(    color = "#174EA6",    linewidth = 1.2
+  ) +  geom_point(    data = ~ slice_max(.x, month, n = 1),    color = "#174EA6",    size = 2
+  ) +  theme_void() +  theme(    plot.margin = margin(2, 2, 2, 2)  )
+
+p
+
+sparkline(admissions, month, applications)
+
+
+```

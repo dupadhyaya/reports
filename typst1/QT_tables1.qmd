@@ -1,0 +1,575 @@
+---
+title: "Quarto + Typst + Tables"
+format: 
+    typst:
+        toc: true
+        page-size: a4
+        orientation: landscape
+        margin:
+            x: 1cm
+            y: 1cm
+---
+
+## Quarto
+
+### Quarto Tables T1
+| Product    | Quantity | Price  |
+|:-----------|:--------:|-------:|
+| Apple      |    5     | \$1.20 |
+| Banana     |    12    | \$0.50 |
+| Cherry     |   100    | \$0.05 |
+
+: A simple fruit inventory table {#tbl-fruit}
+
+### Quarto T2 
+
+See @tbl-fruit for inventory levels.
+
+
+| fruit  | price  |
+|--------|--------|
+| apple  | 2.05   |
+| pear   | 1.37   |
+| orange | 3.09   |
+
+: Fruit prices {tbl-colwidths="[75,25]"}
+
+
+
+## Typst
+
+::: {#tbl-native}
+```{=typst}
+#table(
+  columns: (1fr, auto, auto),   inset: 10pt,
+  align: horizon, 
+  table.header(  [*Item*], [*Quantity*], [*Status*]  ),
+  [Premium Widgets], [250], [In Stock],
+  [Super Gadgets], [12], [Low Stock],
+  [Mystery Boxes], [0], [Out of Stock]
+)
+```
+This is the caption for the native Typst table.
+:::
+
+As shown in @tbl-native, stock levels vary.
+
+## R
+
+### GT Table - R
+
+```{r}
+#| label: tbl-gt-example
+#| tbl-cap: "Table generated via gt package"
+#| echo: false
+library(gt)
+library(tibble)
+
+tribble(  ~Fruit, ~Price,  "Apple", 2.05,  "Pear",  1.37) |> gt()
+
+```
+gt (Great Tables): Highly recommended. Posit heavily optimized gt so that its CSS-based styles, complex multi-tier headers, and footers automatically translate into native Typst code with zero layout degradation
+
+## RTable - kable
+```{r}
+#| label: tbl-cars
+#| tbl-cap: "Cars"
+#| tbl-colwidths: [60,40]
+library(kableExtra)
+kable(head(cars))
+```
+
+
+
+
+## Python
+
+```{python}
+#| label: tbl-py-example
+#| tbl-cap: "Table generated via Pandas"
+#| echo: false
+import pandas as pd
+
+df = pd.DataFrame({    "Fruit": ["Apple", "Pear"],    "Price": [2.05, 1.37]})
+df
+
+```
+
+### Python Tables T2
+
+```{python}
+#| label: tbl-planets
+#| tbl-cap: Astronomical object
+#| eval: false
+#| echo: false
+
+#from IPython.display import Markdown
+
+#from tabulate import tabulate
+#table = [["Sun","696,000",1.989e30],     ["Earth","6,371",5.972e24],         ["Moon","1,737",7.34e22],    ["Mars","3,390",6.39e23]]
+
+#Markdown(tabulate(  table,   headers=["Astronomical object","R (km)", "mass (kg)"]))
+```
+
+
+## Native Quarto. List Table
+
+::: {.list-table}
+* - Header 1
+  - Header 2
+
+* - This cell contains a long paragraph.
+  - This cell contains a bulleted list:
+    - Item A
+    - Item B
+:::
+
+
+## Sub Tables - Quarto
+
+::: {#tbl-panel layout-ncol=2}
+| Col1 | Col2 | Col3 |
+|------|------|------|
+| A    | B    | C    |
+| E    | F    | G    |
+| A    | G    | G    |
+
+: First Table {#tbl-first}
+
+| Col1 | Col2 | Col3 |
+|------|------|------|
+| A    | B    | C    |
+| E    | F    | G    |
+| A    | G    | G    |
+
+: Second Table {#tbl-second}
+
+Main Caption
+:::
+
+See @tbl-panel for details, especially @tbl-second.
+
+## typstable in R
+
+ A specialized CRAN package built exclusively to output Typst markup. It features a pipe-friendly (|>) syntax specifically built for grouped headers, row groups, and conditional cell formatting compiled directly for Typst engines.
+
+```{r}
+#| label: tbl-typstable-demo
+#| tbl-cap: "Advanced dataset formatting compiled cleanly with typstable."
+#| echo: false
+#| message: false
+
+# Make sure you have installed the package first:
+# install.packages("typstable")
+
+library(typstable)
+library(dplyr)
+
+# Prepare a subset of mock performance data 
+df <- tibble(  Model = c("Alpha", "Beta", "Gamma", "Delta"),
+  Category = c("Core", "Core", "Edge", "Edge"),  Speed = c(95, 88, 72, 64),
+  Efficiency = c(91, 84, 95, 78),  Cost = c(120, 110, 85, 75))
+
+# Build the table using native typstable pipelines
+df |>  select(Model, Category, Speed, Efficiency, Cost) |> tt( align = c("l", "c", "c", "c", "r","r"), col_names = c("Ser", "Model", "Category", "Speed (GHz)", "Efficiency (%)", "Cost (Rs)") ) |>   tt_header_above(c(" " = 3, "Performance Metrics" = 2, "Financials" = 1)) 
+  
+```
+
+Refer to @tbl-typstable-demo to see how the row blocks and grouped metrics line up natively.
+
+
+## tinytable in R
+https://vincentarelbundock.github.io/tinytable/vignettes/tinytable_tutorial_typst.pdf
+
+•  An excellent, lightweight alternative that features dedicated Typst engine support without drawing heavy dependencies.
+The tinytable package is a newer, ultra-lightweight, and zero-dependency alternative to gt or kableExtra that works exceptionally well with Quarto and Typst. It has a clean, explicit syntax (style_tt(), format_tt(), group_tt()) and outputs clean native
+
+```{r}
+#| label: tbl-tiny-demo
+#| tbl-cap: "An example table built using the tinytable engine."
+#| cache: false
+#| echo: false
+#| message: false
+
+# Make sure you have installed the package first:
+# install.packages("tinytable")
+
+library(tinytable)
+library(dplyr)
+
+# Create a clean mock dataset
+x= mtcars
+
+# Render and style the table
+cap <- ' Tiny Table Eg'; not <- ' This is note '
+tt(x, caption = cap, notes = not)  |>  style_tt(  i = 1:3,   j = 1:3,   background = "teal",   color = "white",   bold = TRUE) |> group_tt(j = list("Halloumi" = 1:2, "Tofu" = 4:5))
+```
+
+## More with Tiny Tables
+
+```{r}
+#| label: tbl-tiny-demo2
+#| tbl-cap: "An example table built using the tinytable engine."
+#| cache: false
+#| echo: false
+#| message: false
+pacman::p_load(tinytable, dplyr)
+#iris |> head(10) |> tt( caption = "Iris Dataset", notes = "This is a note about the Iris dataset") |>  style_tt( i = 1:3, j = 1:3, background = "teal", color = "white", bold = TRUE) |> group_tt(j = list("Sepal" = 1:2, "Petal" = 3:4))
+x = mtcars[1:4, 1:5]
+#x |> tt(width=.5)
+#x |> tt(width=1)
+#x |> tt(width=c(1,1,2,1,2))
+
+df = data.frame(A = "Sed ut perspiciatis unde omnis iste natus error sit voluptatemaccusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illoinventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.", B = " Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos.")
+df |> tt(width=c(2,1))
+
+#x |> tt(height=3, note= "Height of each row")
+#tt(x, notes = list(a = "Blah.", b = "Blah blah."))
+
+#tt(x, notes = list( a = list(i = 0:1, j = 1, text = "Blah."), b = "Blah blah."))
+
+#tt(x, notes = list( a = list(i = c(0,4), j = c(2,4), text = "Dhiraj"), b = list(i=4, j=2, text = "Upadhyaya")))
+```
+
+```{r}
+#| label: tbl-tiny-demo3
+#| tbl-cap: "An example table built using the tinytable engine."
+#| cache: false
+#| echo: false
+#| message: false
+pacman::p_load(tinytable, dplyr)
+x = mtcars[1:4, 1:5]
+tt(x) |> print("markdown")
+#tt(x) |> print("html")
+#tt(x) |> print("latex")
+#options(tinytable_print_output = "markdown")
+y = iris[1:10, ]
+tt(y) |> style_tt(Species == "setosa", background = "pink") #|> subset(select=-Species)
+tt(x) |> style_tt(cyl == 4 & mpg < 25, background = "pink") #|> subset(select=-Species)
+
+tt(x) |> style_tt(i = cyl == 6 & mpg < 25, color ='red') |> group_tt(j=list('Metric1' = 1:2, 'Metric2' = 3:5)) 
+
+tt(x) |> style_tt( i = 2:3, j = c(1, 3, 4), italic = TRUE, bold=TRUE, color = "orange" )
+tt(x) |> style_tt(i = mpg > 21, background = "lightblue", bold = TRUE)
+```
+
+```{r}
+#| label: tbl-tiny-demo4
+#| tbl-cap: "An example table built using the tinytable engine."
+#| cache: false
+#| echo: false
+#| message: false
+pacman::p_load(tinytable, dplyr)
+x = mtcars[1:4, 1:5]
+tt(x) |> print("markdown")
+
+tt(x, theme = "empty") |> style_tt(i = 0, line = "t", line_color = "orange", line_width = 0.4) |>
+ style_tt(i = 1, line = "t", line_color = "purple", line_width = 0.2) |> style_tt(i = 4, line = "b", line_color = "orange", line_width = 0.4)
+
+dat <- data.frame(1:2, 3:4, 5:6, 7:8)
+tt(dat, theme = "empty", colnames = FALSE) |> style_tt( line = "tblr", line_color = "white", line_width = 0.5, background = "blue", color = "white" )
+
+dat <- mtcars[1:9, 1:8]
+tt(dat) |> group_tt(i = list( "Group-A" = 3, "Group-B" = 4, "Group-C" = 7))
+
+tt(head(iris)) |> group_tt(i = list("After 0" = 1, "After 3a" = 4, "After 3b" = 4, "After 5"= 6))
+
+```
+<|code_to_edit|>
+
+```{r}
+#| echo: false
+#| cache: false
+
+library(tinytable)
+tmp <- do.call(rbind, by(iris, ~Species, head, n = 3))
+tt(tmp) |> group_tt(i = Species) |> subset(select = -Species) |> style_tt(align = "c") |> style_tt(i = "groupi", align = "r", color = "teal", line = "b") |>  theme_typst()
+
+tt(mtcars, caption = "Motor Car Data") |>  theme_typst()
+ #|>  theme_latex(multipage = TRUE, rowhead = 1)
+
+tmp2 <- do.call(rbind, by(mtcars, ~gear, head)) %>% arrange(mpg)
+tt(tmp2) |> group_tt(i = gear)  |> subset(select = -gear) |> style_tt(align = "c") |> style_tt(i = "groupi", align = "l", color = "teal", line = "b") |>  theme_typst()
+
+tmp2 %>% arrange(gear, mpg) |> tt() %>% group_tt(i = gear)  |> style_tt("groupi", color = "white", background = "teal") |>  style_tt(align = "c") |> style_tt("~groupi", j = 1, indent = 2) |> theme_typst()
+
+# subset and sort data
+df <- mtcars |>  head(10) |>  sort_by(~am)
+# draw table
+tt(df) |> group_tt(i = df$am)
+
+rowmat <- matrix(colnames(iris))
+tt(head(iris, 7)) |>  group_tt(i = c(2, 5), j = rowmat)
+
+
+rowmat <- matrix(c(
+ "-", "-", "-", "-", "-",
+ "/", "/", "/", "/", "/"))
+tt(head(iris, 7)) |> group_tt(i = 2, j = rowmat) 
+
+tt(head(iris, 7)) |> group_tt(i = c(1, 8), j = rowmat)
+
+x <- mtcars[1:4, 1:5]
+tt(x) |>
+ group_tt(j = list("Foo" = 2:3, "Bar" = 5)) |>
+ group_tt(j = list("Hello" = 1:2, "World" = 4:5))
+
+tt(x, theme = "striped")
+
+tt(x, theme = "grid")
+
+tt(x, theme = "empty")
+
+tt(x, theme = "empty") |> theme_striped()
+
+tt(x) |> theme_rotate(angle = 90)
+
+tt(x) |> theme_rotate(i = 0, angle = 45)
+
+tt(x) |> theme_rotate(i = 1:2, j = 1, angle = 90)
+
+tt(x) |> theme_rotate(i = 0, angle = 45) |>  theme_rotate(i = 1:4, j = 1, angle = 90)
+
+dat <- data.frame( Metric = c("Sales", "Conversion", "Growth", "Efficiency"), Value = c(75, 45, 92, 38), Percentage = c(0.75, 0.45, 0.92, 0.38))
+
+tt(dat) |> plot_tt(j = 2, fun = "bar", data = as.list(dat$Value), color = "darkorange")|> plot_tt(j = 3, fun = "bar", data = as.list(dat$Percentage), color = c("steelblue", "lightgrey"), xlim = c(0, 1))
+```
+
+## Grouped Tables - 2
+
+```{r}
+#| echo: false
+#| cache: false
+
+library(tinytable)
+
+tmp <- mtcars %>%  tibble::rownames_to_column("Car") %>%  arrange(gear, mpg) %>%  group_by(gear) %>%  mutate(gearGroup = paste0("Gear: ", gear, " | No. of Cars: ", n())) %>%  ungroup()
+#tmp
+# Group labels and last row position of each group
+grp <- tmp %>%  count(gearGroup, name = "n") %>%  mutate(end = cumsum(n))
+#grp
+group_labels <- as.list(setNames(grp$end, grp$gearGroup))
+
+# Create table
+tt(tmp) %>%  group_tt(i = group_labels) %>%  subset(select = -gearGroup) %>%  style_tt(align = "c") %>%  style_tt(i = "groupi", align = "l",  color = "teal", line = "b") %>%  theme_typst()
+
+```
+
+```{=typst}
+#show figure.caption: set text(
+  fill: rgb("#8c2146"),
+  size: 10pt,
+  weight: "bold",)
+```
+
+## Grouped Tables - 3
+
+```{r}
+#| echo: false
+#| label: tbl-gear-summary1
+#| tbl-cap: "Gear Wise Summary of Cars with Average MPG and Weight and Count2"
+#| cache: false
+#| tbl-cap-location: bottom
+
+library(tinytable)
+library(dplyr)
+
+tmp <- mtcars %>%  tibble::rownames_to_column("Car") %>%  arrange(gear, mpg)
+
+# Group summary
+grp <- tmp %>%  group_by(gear) %>%  summarise( n = n(), avgMPG = round(mean(mpg), 2),  avgWT = round(mean(wt), 2),  .groups = "drop"  ) %>%  mutate(    label = paste0( "Gear: ", gear,  " | Cars: ", n,  " | Avg MPG: ", avgMPG,  " | Avg WT: ", avgWT   ),  end = cumsum(n)  )
+
+group_labels <- as.list(setNames(grp$end - grp$n, grp$label))
+# Generate tinytable
+tt(tmp %>% select(Car, gear, mpg, wt, everything()), notes=NULL)  %>%   group_tt(i = group_labels) %>%  style_tt(align = "c") %>%  style_tt(    i = "groupi",    align = "l",    color = "teal",    line = "b"  ) %>%  theme_typst()
+
+```
+
+```{=typst}
+#text(size: 8pt, style: "italic")[  Note: MPG = Miles per Gallon; WT = Weight in 1,000 lbs.]
+```
+
+```{r}
+#| echo: false
+#| label: tbl-column-widths
+#| tbl-cap: "Setting Table Column Widths in TinyTable in 3 Table : Individual Captions do not work2"
+#| cache: false
+#| tbl-cap-location: bottom
+
+library(tinytable)
+library(dplyr)
+
+tmp <- mtcars %>%  tibble::rownames_to_column("Car") %>%  arrange(gear, mpg)
+c1="T1: Setting Table Column Widths in TinyTable2"
+tt(  tmp %>% head() %>% select(Car, gear, mpg, wt, everything()),  width = c(120, 45, 50, 50, rep(45, ncol(tmp) - 4)), caption = c1) %>%
+  theme_typst()
+c2="T2: Fractions of Table Width"
+tt( tmp %>% head() %>% select(Car, gear, mpg, wt, everything()),   width = c(3, 1, 1, 1, rep(.8, ncol(tmp) - 4)), caption = c2) %>%
+  theme_typst()
+c3="T3: Same Width"
+tt( tmp %>% head() %>% select(-Car) %>% select(gear, mpg, wt, everything()),   width = 1, caption = c3) %>%
+  theme_typst()
+
+```
+
+
+```{r}
+#| echo: false
+#| label: tbl-table-options3
+#| tbl-cap: "Background Color and Font Style in TinyTable3"
+#| cache: false
+#| tbl-cap-location: bottom
+
+pacman::p_load(tinytable, dplyr)
+
+tt(mtcars %>% head()) %>%  style_tt(background = "#EAF4F4") %>%  theme_typst()
+
+tt(mtcars %>% head()) %>%  style_tt(i = 0, background = "#006D77", color = "white", bold = TRUE) %>%  style_tt(i = 1:6, background = "#F0F8FF") %>%  theme_typst()
+
+tt(mtcars %>% head()) %>%  style_tt(i = c(2, 4), background = "#FFF2CC") %>%  style_tt(j = 1, background = "#D9EAF7") %>%  theme_typst()
+
+tt(mtcars %>% head()) %>%   style_tt(    i = seq(2, nrow(mtcars), 2),    background = "#F2F2F2"  ) %>%  theme_typst()
+```
+In tinytable, the background argument sets the cell fill colour, while color sets the text colour.
+For your Quarto–Typst reports, it is recommended to use a dark header, light blue group headings, and a white or light-grey table body.
+
+## Multi Column Table Report
+
+```{r}
+#| echo: false
+#| label: tbl-table-options4
+#| tbl-cap: "Background Color and Font Style in TinyTable 2"
+#| cache: false
+#| tbl-cap-location: bottom
+
+pacman::p_load(tinytable, dplyr, tidyr)
+df <- mtcars %>%   tibble::rownames_to_column("Car") %>%  select(Car, mpg, wt)
+
+nblock <- 3
+nrows <- ceiling(nrow(df) / nblock)
+
+df_wide <- df %>%  mutate(    block = ceiling(row_number() / nrows),    row = (row_number() - 1) %% nrows + 1
+  ) %>%  pivot_wider(    id_cols = row,    names_from = block,    values_from = c(Car, mpg, wt),
+    names_glue = "{.value}_{block}"  ) %>%  select(    row,    Car_1, mpg_1, wt_1,    Car_2, mpg_2, wt_2,    Car_3, mpg_3, wt_3
+  ) %>%  select(-row)
+
+tt(  df_wide,  caption = "Motor Cars: Three Side-by-Side Blocks",  width = rep(1, ncol(df_wide))) %>%  style_tt(align = "c") %>%  theme_typst()
+```
+
+```{=typst}
+#pagebreak()
+```
+
+## More Multi Column Table Report
+
+```{r}
+#| echo: false
+#| results: asis
+#| label: tbl-table-options5
+#| tbl-cap: "Motor Cars: Three Side-by-Side Blocks"
+pacman::p_load(tinytable, dplyr, tidyr)
+df <- mtcars %>%  tibble::rownames_to_column("Car") %>%  select(Car, mpg, wt)
+cat("```{=typst}\n#columns(3, gutter: 8pt)[\n```\n")
+tt(df, width = c(3, 1, 1)) %>%  theme_typst()
+cat("```{=typst}\n]\n```\n")
+```
+
+```{r}
+#| echo: false
+library(dplyr)
+iris3 <- iris %>% mutate(ser = row_number()) %>% select(ser, Species, Sepal.Length, Petal.Length)
+write.csv(iris3, "iris3.csv", row.names = FALSE)
+```
+\newpage
+
+```{=typst}
+#columns(3, gutter: 10pt)[
+  #set text(  font: ("Roboto", "Arial", "DejaVu Sans"),  size: 8pt)
+  #let data = csv("iris3.csv", row-type: dictionary)
+
+  #table(   columns: (0.6fr, 1.5fr, 1fr, 1fr), inset: 3pt,stroke: 0.3pt + gray.lighten(60%),  fill: (x, y) => if calc.odd(y) { rgb("#F1F5F9") },
+    table.header([*Ser*], [*Species*], [*Sepal*],[*Petal*],  ),
+    ..data.map(row => ( [#row.at("ser")], [#row.at("Species")], [#row.at("Sepal.Length")],  [#row.at("Petal.Length")], )).flatten()
+  )
+]
+```
+
+\newpage
+
+## Another Way of Multiple Column Table Report
+```{r}
+#| echo: false
+#| results: asis
+library(dplyr)
+
+iris3 <- iris %>%  mutate(ser = row_number()) %>%  select(ser, Species, Sepal.Length, Petal.Length)
+
+# Convert each row into Typst table cells
+cells <- apply(iris3, 1, function(x) {
+  paste0("[", x, "]", collapse = ", ")})
+
+typst_code <- paste0(  "#columns(3, gutter: 10pt)[\n",
+  "#set text(size: 8pt)\n",
+  "#table(\n",
+  "columns: (0.6fr, 1.5fr, 1fr, 1fr),\n",
+  "inset: 3pt,\n",
+  "stroke: 0.3pt + gray.lighten(60%),\n",
+  "table.header([*Ser*], [*Species*], [*Sepal*], [*Petal*]),\n",
+  paste(cells, collapse = ",\n"),
+  "\n)\n",
+  "]")
+
+cat("```{=typst}\n", typst_code, "\n```\n", sep = "")
+
+```
+
+
+
+## Long Tables (Spanning Pages)
+
+By default, Typst wraps tables inside non-breakable figures, which prevents them from splitting across multiple pages. If you have a long table, add this show rule somewhere in your document to allow them to break gracefully across pages
+
+`#show figure: set block(breakable: true)`{=typst}
+
+or
+
+```{=typst}
+// Crucial: This rule allows figures (including tables) to break across page boundaries
+#show figure: set block(breakable: true)
+```
+
+```{r}
+#| label: tbl-iris-long
+#| tbl-cap: "The full Iris dataset displayed across multiple pages with repeating headers."
+#| echo: false
+#| message: false
+
+library(gt)
+
+# Convert the full iris dataset into a gt table
+iris |> head(40) |>  gt() |>   tab_header(    title = "Iris Dataset Measurements",    subtitle = "All 150 observations"  ) |>     opt_table_font( font = list(      google_font(name = "Roboto"),      "Arial",      "Helvetica"    ))
+# # Ensures the header row repeats automatically on every new page
+```
+
+As we can see in @tbl-iris-long, the data spreads over several pages cleanly.
+
+1. #show figure: set block(breakable: true): This is the native Typst rule that permits the table container to split across pages.
+2. Native gt Translation: When format: typst is active, gt compiles the data into a native Typst #table(). Native Typst tables duplicate their table.header() onto every new page by default without needing extra R code configurations.
+
+
+## Modify Table Options using gt
+
+https://gt.rstudio.com/reference/tab_options.html
+
+# Additional Libraries
+
+```{=typst}
+#import "@preview/tablem:0.3.0": tablem
+```
+
+#tablem[
+
+  | Feature | Typst | Markdown |
+  |---------|-------|----------|
+  | Speed   | Fast  | Slow     |
+]

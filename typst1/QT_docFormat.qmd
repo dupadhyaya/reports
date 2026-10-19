@@ -1,0 +1,197 @@
+---
+title: "Quarto + Typst + Tables - Ver2"
+format: 
+    typst:
+        toc: true
+        page-size: a4
+        orientation: landscape
+        margin:
+            x: 1cm
+            y: 1cm
+
+---
+
+## Quarto
+
+## Awesome Font Icons
+
+- Install 
+    - brew install --cask font-fontawesome
+- Check
+    - typst fonts | grep -i "Font Awesome"
+
+
+
+## Admissions Analysis
+
+## Awesome Fonts 
+
+Font Awesome in Quarto Typst PDF
+
+This requires a different approach.
+
+The Quarto Font Awesome extension supports HTML and LaTeX PDF, but not native Typst PDF. For Typst, use its dedicated Font Awesome package. GitHub
+
+First, install the Font Awesome desktop .otf fonts on your Mac from Font Awesome.
+
+Then add the following to your .qmd document:
+
+```{=typst}
+
+#import "@preview/fontawesome:0.6.2": fa-icon
+
+#fa-icon("graduation-cap", solid: true) Student Admissions
+
+#v(5mm)
+
+#fa-icon("chart-line", solid: true, fill: blue) Admissions Trends
+
+#v(5mm)
+
+#fa-icon("users", solid: true, fill: green) Student Enrolment
+
+```
+
+
+```{=typst}
+#fa-icon(  "chart-line",   solid: true,   fill: blue,  size: 18pt, ) Admissions Trends
+```
+
+## Headings and Fonts
+
+```{=typst}
+
+= #fa-icon("graduation-cap", solid: true) Admissions
+
+== #fa-icon("chart-line", solid: true) Trends
+
+== #fa-icon("users", solid: true) Enrolment
+
+```
+
+```{=typst}
+#rect(  fill: rgb("#EAF3FF"),  radius: 5pt,  inset: 10pt,)[  #fa-icon("lightbulb", solid: true, fill: blue)  *Key Insight*
+  Admissions increased by 12% compared with last year.]
+
+```
+
+```{=typst}
+#let highlight(content) = {  text(    fill: blue,    weight: "bold",  )[ #content ]}
+
+#highlight("Admissions increased by 12%")
+
+#highlight("Missing admission dates detected")
+
+#highlight("Enrolment target achieved")
+
+```
+
+```{=typst}
+#import "typst_ReportFunctions.typ": *
+```
+
+## Admissions Performance
+
+```{=typst}
+#insight-box[
+  Admissions increased by *12%* compared  with the previous admission year.
+
+  The highest growth was observed at  Amity University Jaipur.
+]
+```
+
+## Data Quality
+
+```{=typst}
+#warning-box[
+  Approximately 5% of application records  contain missing admission-stage dates.
+
+  These records require verification.
+]
+
+#report-box(  title: "Admissions Conversion",  icon: "chart-line",
+  color: purple,  background: rgb("#F3EAFF"),
+)[
+  The application-to-enrolment conversion  rate increased from *28% to 34%*.
+]
+```
+
+## Positive Outcomes
+
+```{=typst}
+#success-box[
+  The university achieved its enrolment  target for the current academic year.
+]
+```
+
+
+```{=typst}
+#kpi-card(
+  title: "Enrolment Rate",
+  value: "34.2%",
+  change: "+3.4 pp",
+  icon: "chart-line",
+)
+```
+
+```{=typst}
+#kpi-card(
+  title: "Total Applications",
+  value: "25,480",
+  change: "+12.5% YoY",
+  icon: "users",
+  description: "Compared with previous admission year",
+)
+```
+
+```{=typst}
+#grid(
+  columns: (1fr, 1fr, 1fr),
+  gutter: 5mm,
+
+  kpi-card(
+    title: "Applications",
+    value: "25,480",
+    change: "+12.5%",
+    icon: "users",
+    color: rgb("#174EA6"),
+  ),
+
+  kpi-card(
+    title: "Enrolments",
+    value: "8,250",
+    change: "+8.2%",
+    icon: "graduation-cap",
+    color: rgb("#16733D"),
+    background: rgb("#E7F5EC"),
+  ),
+
+  kpi-card(
+    title: "Conversion",
+    value: "32.4%",
+    change: "+2.1 pp",
+    icon: "chart-line",
+    color: rgb("#A65E00"),
+    background: rgb("#FFF3DF"),
+  ),
+)
+```
+
+```{=typst}
+#kpi-row(
+  kpi-card(title: "Applications",  change: "+12.5%", value: "25,480"),
+  kpi-card(title: "Enrolments", value: "8,250"),
+  kpi-card(title: "Conversion", value: "32.4%"),
+)
+```
+
+```{=typst}
+#kpi-card(  title: "Missing Records",  value: "125",  change: "-18.5%",
+  icon: "triangle-exclamation",  color: rgb("#16733D"),  background: rgb("#FFF3DF"),
+)
+```
+
+
+::: {.appendix}
+# Appendix : List of Figures not shown earlier
+:::

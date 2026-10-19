@@ -1,0 +1,73 @@
+---
+title: "Quarto + Typst : Front Page Design"
+format: 
+    typst:
+        toc: true
+        page-size: a4
+        orientation: landscape
+        margin:
+            x: 1cm
+            y: 1cm
+include-before-body: 
+    - QT_cover1.typ
+    - QT_cover2.typ
+    - QT_cover3.typ
+
+---
+
+<!-- include the cover pages -->
+
+
+## Typst Document Format
+
+| Position | Content |
+|---|---|
+| Top | Amity University logo |
+| Upper middle | University name |
+| Centre | Large photograph of the university campus |
+| Below photograph | Report title |
+| Below title | Subtitle or reporting period |
+| Bottom | Education Data Analytics Department |
+| Footer | Report generation date |
+
+## Typst provides Several Layouts
+
+| Function | Purpose |
+|---|---|
+| `#pagebreak()` | Start a new page |
+| `#align()` | Align content left, centre, or right |
+| `#image()` | Insert a photograph or logo |
+| `#text()` | Control font size, colour, and weight |
+| `#v()` | Insert vertical space |
+| `#h()` | Insert horizontal space |
+| `#rect()` | Draw a rectangle |
+| `#block()` | Create a content container |
+| `#grid()` | Arrange elements in columns |
+| `#place()` | Position elements relative to an anchor |
+
+
+```{=typst}
+#import "QT_cover0.typ": university-cover
+
+#university-cover(
+  title: "Admissions Analytics Report by Dhiraj",
+  subtitle: "Academic Year 2026–27",
+  image-path: "auupl.jpeg",
+  department: "Education Data Analytics",
+  report-date: "October 2026",
+)
+```
+
+```{=typst}
+#import "@preview/fontawesome:0.6.2": fa-icon
+
+#fa-icon("graduation-cap", solid: true) Student Admissions
+
+#v(5mm)
+
+#fa-icon("chart-line", solid: true, fill: blue) Admissions Trends
+
+#v(5mm)
+
+#fa-icon("users", solid: true, fill: green) Student Enrolment
+```
