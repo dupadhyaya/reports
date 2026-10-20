@@ -1,0 +1,12 @@
+---
+title: "Quarto + Typst + xxxx"
+format: 
+    typst:
+        toc: true
+        page-size: a4
+        orientation: landscape
+        margin:
+            x: 1cm
+            y: 1cm
+
+---
