@@ -16,6 +16,7 @@ grp
 # Create table
 tt(tmp) %>%  group_tt(i = group_labels) %>%  subset(select = -gearGroup) %>%  style_tt(align = "c") %>%  style_tt(i = "groupi", align = "l",  color = "teal", line = "b") %>%  theme_typst()
 
+
 #Table2
 library(tinytable)
 library(dplyr)
